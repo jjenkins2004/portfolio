@@ -15,19 +15,19 @@ npm run lint         # oxlint
 
 ```
 src/main.tsx             entry
-src/App.tsx              the one page: sections top to bottom
+src/App.tsx              the one page: sections top to bottom (Home so far)
 src/index.css            global styles; imports tokens first
 src/styles/              tokens.css (site variables), theme.ts (same palette as data), contrast.ts
-src/content/             (planned) typed content: projects, experience, writing, links; sections render these
-src/sections/            (planned) one component per page section
+src/content/             typed content (profile.ts so far); sections render these
+src/sections/            one component per page section; home/ is the shell-run home screen
 src/components/          shared pieces, each with a colocated *.stories.tsx; PalettePreview so far
 .storybook/              Storybook config (react-vite; a11y, docs, vitest addons)
 ```
 
 ## Page structure
 
-Single route, in this order: Nav · Hero (name, identity line, status, links) · About (short + skills) ·
-Work (featured case-study cards, then a compact list) · Experience (timeline) · Writing · Elsewhere · Footer.
+Single route, in this order: Nav · Home (name, identity line, links; shell with facts and section jumps) ·
+Work (featured case-study cards, then a compact list) · Experience (timeline) · Elsewhere (Troy Labs, hackathons, GSSC) · Footer.
 Content lives in `src/content/` as data, never inline in a section.
 
 ## Palette
