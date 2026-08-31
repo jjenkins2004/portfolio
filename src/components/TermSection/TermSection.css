@@ -1,0 +1,41 @@
+.tsec { width: 100%; max-width: 64rem; background: var(--bg-raised); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: 0 12px 32px -16px rgba(0, 0, 0, 0.25); font-family: var(--font-mono); font-size: var(--text-sm); }
+.tsec-bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); }
+.tsec-lights { display: flex; gap: 8px; }
+.tsec-lights i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+.tsec-lights i:nth-child(1) { background: #ff5f57; }
+.tsec-lights i:nth-child(2) { background: #febc2e; }
+.tsec-lights i:nth-child(3) { background: #28c840; }
+.tsec-title { color: var(--ink-muted); text-align: center; }
+.tsec-body { padding: var(--space-5, 1.25rem); display: grid; gap: var(--space-4); align-content: start; }
+.tsec-cmd, .tsec-dir { color: var(--ink-muted); }
+.tsec-prompt { color: var(--accent); }
+
+/* CSS-drawn tree rails */
+.tsec-tree { display: grid; }
+.tsec-item { position: relative; padding-left: 1.9rem; padding-bottom: var(--space-4); }
+.tsec-item::before { content: ''; position: absolute; left: 0.5rem; top: 0; bottom: 0; border-left: 1px solid var(--line); }
+.tsec-item::after { content: ''; position: absolute; left: 0.5rem; top: 0.72em; width: 1rem; border-top: 1px solid var(--line); }
+.tsec-item:last-child { padding-bottom: 0; }
+.tsec-item:last-child::before { bottom: auto; height: 0.72em; }
+.tsec-node { display: flex; align-items: baseline; gap: var(--space-3); }
+.tsec-name { color: var(--accent); text-decoration: none; white-space: nowrap; }
+a.tsec-name:hover { color: var(--accent-strong); }
+.tsec-dim { color: var(--ink-muted); }
+.tsec-note { color: var(--ink-muted); }
+.tsec-badge { font-size: var(--text-xs); letter-spacing: 0.04em; padding: 0.1em 0.45em; border-radius: var(--radius); }
+.tsec-badge.pop { background: var(--pop); color: var(--pop-ink); }
+.tsec-badge.soft { background: var(--accent-soft); color: var(--accent); }
+.tsec-badge.line { border: 1px solid var(--line); color: var(--ink-muted); }
+.tsec-meta { margin-left: auto; padding-left: var(--space-4); font-size: var(--text-xs); color: var(--ink-muted); white-space: nowrap; }
+.tsec-kids { display: grid; gap: var(--space-2); margin-top: var(--space-2); }
+.tsec-kids .tsec-tree { margin-top: var(--space-2); }
+.tsec-kids .tsec-tree .tsec-item { padding-bottom: var(--space-3); }
+.tsec-kids .tsec-tree .tsec-item:last-child { padding-bottom: 0; }
+
+/* line-number gutter: numbers sit at the same x as the command's $, content shifts right — mirrors Home */
+.tsec-root { position: relative; margin-left: 2.7rem; }
+.tsec-body > .tsec-tree { margin-left: 2.7rem; }
+.tsec-n { position: absolute; left: -2.7rem; top: 0; color: var(--line); font-variant-numeric: tabular-nums; user-select: none; }
+.tsec-kids .tsec-item .tsec-n { left: -4.6rem; }
+.tsec-item.hot > .tsec-node .tsec-n { background: var(--pop); color: var(--pop-ink); padding: 0.05em 0.35em; border-radius: var(--radius); left: -3.1rem; }
+.tsec-kids .tsec-item.hot > .tsec-node .tsec-n { left: -5rem; }

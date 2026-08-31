@@ -24,3 +24,9 @@ ul { margin: 0; padding: 0; list-style: none; }
 p { margin: 0; }
 .mono { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.02em; }
 .todo { color: var(--ink-muted); border-bottom: 1px dashed var(--ink-muted); }
+
+/* full-viewport slides: one section per screen, snap between them */
+.snap { height: 100vh; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+.slide { min-height: 100vh; scroll-snap-align: start; scroll-snap-stop: always; display: grid; place-items: center; padding: var(--space-8); }
+.slide:first-child { display: block; padding: 0; }
+@media (prefers-reduced-motion: reduce) { .snap { scroll-behavior: auto; } }

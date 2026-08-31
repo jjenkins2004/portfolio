@@ -26,8 +26,8 @@ src/components/          shared pieces, each with a colocated *.stories.tsx; Pal
 
 ## Page structure
 
-Single route, in this order: Nav · Home (name, identity line, links; shell with facts and section jumps) ·
-Work (featured case-study cards, then a compact list) · Experience (timeline) · Elsewhere (Troy Labs, hackathons, GSSC) · Footer.
+Single route as full-viewport slides with scroll snap: Home (name, identity, links; shell run with facts and
+section jumps) · Projects · Experience · Elsewhere — the last three each a TermSection terminal window (tree ~/jjenkins/<dir>).
 Content lives in `src/content/` as data, never inline in a section.
 
 ## Palette

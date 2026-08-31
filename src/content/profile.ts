@@ -16,7 +16,7 @@ export const profile = {
     { label: 'Resume', href: '/resume.pdf' }, // TODO: drop the PDF into public/
   ],
   sections: [
-    { id: 'work', label: 'Work' },
+    { id: 'projects', label: 'Projects' },
     { id: 'experience', label: 'Experience' },
     { id: 'elsewhere', label: 'Elsewhere' },
   ],
