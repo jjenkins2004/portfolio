@@ -2,7 +2,7 @@ import './TermSection.css';
 
 export type TermItem = {
   name: string;
-  href?: string;
+  href?: string; // whole entry (name row + line) becomes one link
   dim?: string; // muted suffix after the name (org on a role)
   badge?: { text: string; tone: 'pop' | 'soft' | 'line' }; // unused for now; label vocabulary is a later decision
   note?: string; // inline one-liner, muted (compact leaf rows)
@@ -13,32 +13,39 @@ export type TermItem = {
 };
 
 function Node({ item, nums }: { item: TermItem; nums: Map<TermItem, string> }) {
-  return (
-    <div className={'tsec-item' + (item.hot ? ' hot' : '')}>
+  const body = (
+    <div className="tsec-hit">
       <div className="tsec-node">
-        <span className="tsec-n">{nums.get(item)}</span>
-        {item.href ? (
-          <a className="tsec-name" href={item.href}>
-            {item.name}
-          </a>
-        ) : (
-          <span className="tsec-name">{item.name}</span>
-        )}
+        <span className={'tsec-name' + (item.children ? ' is-dir' : '')}>{item.name}</span>
         {item.dim && <span className="tsec-dim">· {item.dim}</span>}
         {item.badge && <span className={'tsec-badge ' + item.badge.tone}>{item.badge.text}</span>}
         {item.note && <span className="tsec-note">{item.note}</span>}
         {item.meta && <span className="tsec-meta">{item.meta}</span>}
       </div>
-      {(item.line || item.children) && (
+      {item.line && (
         <div className="tsec-kids">
-          {item.line && <p className="tsec-line">{item.line}</p>}
-          {item.children && (
-            <div className="tsec-tree">
-              {item.children.map((c) => (
-                <Node key={c.name} item={c} nums={nums} />
-              ))}
-            </div>
-          )}
+          <p className="tsec-line">{item.line}</p>
+        </div>
+      )}
+    </div>
+  );
+  return (
+    <div className={'tsec-item' + (item.hot ? ' hot' : '')}>
+      <span className="tsec-n">{nums.get(item)}</span>
+      {item.href ? (
+        <a className="tsec-link" href={item.href}>
+          {body}
+        </a>
+      ) : (
+        body
+      )}
+      {item.children && (
+        <div className="tsec-kids">
+          <div className="tsec-tree">
+            {item.children.map((c) => (
+              <Node key={c.name} item={c} nums={nums} />
+            ))}
+          </div>
         </div>
       )}
     </div>

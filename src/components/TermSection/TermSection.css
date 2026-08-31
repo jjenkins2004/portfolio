@@ -12,30 +12,42 @@
 
 /* CSS-drawn tree rails */
 .tsec-tree { display: grid; }
-.tsec-item { position: relative; padding-left: 1.9rem; padding-bottom: var(--space-4); }
+.tsec-item { position: relative; padding-left: 1.9rem; padding-bottom: var(--space-6); }
 .tsec-item::before { content: ''; position: absolute; left: 0.5rem; top: 0; bottom: 0; border-left: 1px solid var(--line); }
-.tsec-item::after { content: ''; position: absolute; left: 0.5rem; top: 0.72em; width: 1rem; border-top: 1px solid var(--line); }
+.tsec-item::after { content: ''; position: absolute; left: 0.5rem; top: 0.85em; width: 1rem; border-top: 1px solid var(--line); }
 .tsec-item:last-child { padding-bottom: 0; }
-.tsec-item:last-child::before { bottom: auto; height: 0.72em; }
+.tsec-item:last-child::before { bottom: auto; height: 0.85em; }
 .tsec-node { display: flex; align-items: baseline; gap: var(--space-3); }
-.tsec-name { color: var(--accent); text-decoration: none; white-space: nowrap; }
-a.tsec-name:hover { color: var(--accent-strong); }
+
+/* one link per entry; the whole block lights up on hover */
+.tsec-link { display: block; color: inherit; text-decoration: none; }
+.tsec-hit { border-radius: var(--radius); padding: var(--space-2) var(--space-3) var(--space-2) 0.35rem; margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-3)) calc(-1 * var(--space-2)) -0.35rem; }
+.tsec-link:hover .tsec-hit, .tsec-link:focus-visible .tsec-hit { background: var(--accent-soft); }
+
+.tsec-name { color: var(--ink); font-size: var(--text-base); white-space: nowrap; }
+.tsec-link .tsec-name { color: var(--accent); }
 .tsec-dim { color: var(--ink-muted); }
-.tsec-note { color: var(--ink-muted); }
+.tsec-note { font-family: var(--font-body); font-size: var(--text-sm); color: var(--ink-muted); }
 .tsec-badge { font-size: var(--text-xs); letter-spacing: 0.04em; padding: 0.1em 0.45em; border-radius: var(--radius); }
 .tsec-badge.pop { background: var(--pop); color: var(--pop-ink); }
 .tsec-badge.soft { background: var(--accent-soft); color: var(--accent); }
 .tsec-badge.line { border: 1px solid var(--line); color: var(--ink-muted); }
 .tsec-meta { margin-left: auto; padding-left: var(--space-4); font-size: var(--text-xs); color: var(--ink-muted); white-space: nowrap; }
-.tsec-kids { display: grid; gap: var(--space-2); margin-top: var(--space-2); }
+.tsec-kids { display: grid; gap: var(--space-2); margin-top: var(--space-3); }
+.tsec-line { font-family: var(--font-body); font-size: var(--text-base); }
 .tsec-kids .tsec-tree { margin-top: var(--space-2); }
-.tsec-kids .tsec-tree .tsec-item { padding-bottom: var(--space-3); }
-.tsec-kids .tsec-tree .tsec-item:last-child { padding-bottom: 0; }
+.tsec-kids .tsec-item { padding-bottom: var(--space-4); }
+.tsec-kids .tsec-item:last-child { padding-bottom: 0; }
 
 /* line-number gutter: numbers sit at the same x as the command's $, content shifts right — mirrors Home */
 .tsec-root { position: relative; margin-left: 2.7rem; }
 .tsec-body > .tsec-tree { margin-left: 2.7rem; }
-.tsec-n { position: absolute; left: -2.7rem; top: 0; color: var(--line); font-variant-numeric: tabular-nums; user-select: none; }
+.tsec-n { position: absolute; left: -2.7rem; top: 0.15em; color: var(--line); font-variant-numeric: tabular-nums; user-select: none; }
 .tsec-kids .tsec-item .tsec-n { left: -4.6rem; }
-.tsec-item.hot > .tsec-node .tsec-n { background: var(--pop); color: var(--pop-ink); padding: 0.05em 0.35em; border-radius: var(--radius); left: -3.1rem; }
-.tsec-kids .tsec-item.hot > .tsec-node .tsec-n { left: -5rem; }
+.tsec-item.hot .tsec-n { background: var(--pop); color: var(--pop-ink); padding: 0.05em 0.35em; border-radius: var(--radius); left: -3.1rem; }
+.tsec-kids .tsec-item.hot .tsec-n { left: -5rem; }
+.tsec-kids .tsec-item .tsec-name { font-size: var(--text-sm); }
+.tsec-kids .tsec-item::after { top: 0.72em; }
+.tsec-kids .tsec-item:last-child::before { height: 0.72em; }
+.tsec-link:hover, .tsec-link:focus-visible { color: inherit; }
+.tsec-name.is-dir { color: var(--ink-muted); font-size: var(--text-sm); }
