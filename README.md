@@ -27,7 +27,7 @@ src/components/          shared pieces, each with a colocated *.stories.tsx; Pal
 ## Page structure
 
 Single route as full-viewport slides with scroll snap: Home (name, identity, links; shell run with facts and
-section jumps) · Projects · Experience · Elsewhere — the last three each a TermSection terminal window (tree ~/jjenkins/<dir>).
+section jumps) · Projects · Experience · Elsewhere — the last three each a TermSection terminal window (tree ~/jjenkins/<dir>). A featured project opens its own page at #/projects/<slug> (ProjectPage; stepper so far); unknown slugs get a terminal not-found.
 Content lives in `src/content/` as data, never inline in a section.
 
 ## Palette

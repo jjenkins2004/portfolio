@@ -6,3 +6,4 @@ Typed site content. Sections render these; no copy lives in a component.
 - `projects.ts` — featured four (badge, stack, one-line summary) + `more/` one-liners, as `TermItem[]`.
 - `experience.ts` — roles (org, dates, one line), as `TermItem[]`.
 - `elsewhere.ts` — Troy Labs, GSSC, hackathons one-liners, as `TermItem[]`.
+- `pages/` — one `ProjectPageData` per featured project (`stepper.ts` so far); `index.ts` maps slug → page for App's hash router.
