@@ -29,7 +29,6 @@ export const stepper: ProjectPageData = {
 
     edges = (edge(START).to(with_tax), edge(with_tax).to(EXIT))
 
-
 class CheckoutFlow(Flow[str]):
     @step
     async def build(self) -> Order:
@@ -43,7 +42,6 @@ class CheckoutFlow(Flow[str]):
 
     edges = (edge(START).to(build), edge(build).to(taxed),
              edge(taxed).to(summary), edge(summary).to(EXIT))
-
 
 asyncio.run(CheckoutFlow().run(run_id="run-1"))`,
         },
@@ -64,11 +62,11 @@ output/run-1/checkout/_loop_cursor.json       where each graph got to`,
     },
     {
       title: 'crash, then resume',
-      body: 'Re-run with the same run id: finished steps replay from disk, execution rejoins mid-loop exactly where it died.',
+      body: 'Re-run with the same `run_id`: finished steps replay from disk, execution rejoins mid-loop exactly where it died.',
     },
     {
       title: 'edges, loops, hooks',
-      body: 'edge(a).to(b, c, d) fans out and edge(b, c, d).to(m) joins; cycles are declared edges, checkpointed like everything else. Tracing, metrics and retries attach through hooks — no vendored observability.',
+      body: '`edge(a).to(b, c, d)` fans out and `edge(b, c, d).to(m)` joins; cycles are declared edges, checkpointed like everything else. Tracing, metrics and retries attach through hooks — no vendored observability.',
     },
   ],
   difficulties: [
@@ -79,7 +77,7 @@ output/run-1/checkout/_loop_cursor.json       where each graph got to`,
     {
       // TODO: Joshua's wording
       title: 'resuming a run that died mid-loop',
-      body: "A loop isn't a list of steps — it's a cycle the run may have gone around three times when it crashed. Checkpointing that means persisting not just values but where each graph got to (the _loop_cursor files), so a resumed run replays finished iterations from disk and rejoins the cycle exactly where it broke.",
+      body: "A loop isn't a list of steps — it's a cycle the run may have gone around three times when it crashed. Checkpointing that means persisting not just values but where each graph got to (the `_loop_cursor` files), so a resumed run replays finished iterations from disk and rejoins the cycle exactly where it broke.",
     },
   ],
 };

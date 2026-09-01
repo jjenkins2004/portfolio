@@ -27,6 +27,11 @@ export type ProjectPageData = {
   difficulties: SubSection[];
 };
 
+// `code` spans in body text render as pink inline-code chips.
+function rich(text: string) {
+  return text.split('`').map((part, i) => (i % 2 ? <code key={i}>{part}</code> : part));
+}
+
 function MediaList({ media }: { media?: Media[] }) {
   if (!media?.length) return null;
   return (
@@ -58,7 +63,7 @@ function Subs({ items }: { items: SubSection[] }) {
       {items.map((s) => (
         <div className="pg-dec" key={s.title}>
           <h3 className="pg-h3">{s.title}</h3>
-          {s.body && <p className="pg-prose">{s.body}</p>}
+          {s.body && <p className="pg-prose">{rich(s.body)}</p>}
           <MediaList media={s.media} />
         </div>
       ))}
@@ -77,7 +82,7 @@ export default function ProjectPage({ p }: { p: ProjectPageData }) {
           <span className="pg-name">{p.name}</span>
           <span className="pg-meta">{p.dates}</span>
         </div>
-        <p className="pg-lede">{p.line}</p>
+        <p className="pg-lede">{rich(p.line)}</p>
         <div className="pg-facts">
           <p className="pg-mono">
             <span className="pg-lab">concepts</span>
@@ -95,7 +100,7 @@ export default function ProjectPage({ p }: { p: ProjectPageData }) {
           </p>
         </div>
         <h2 className="pg-h">problem</h2>
-        <p className="pg-prose">{p.problem.body}</p>
+        <p className="pg-prose">{rich(p.problem.body)}</p>
         <MediaList media={p.problem.media} />
         <h2 className="pg-h">features</h2>
         <Subs items={p.features} />
@@ -103,6 +108,7 @@ export default function ProjectPage({ p }: { p: ProjectPageData }) {
         <Subs items={p.difficulties} />
         <p className="pg-cd">
           <a href="#projects">$ cd ..</a>
+          <span className="pg-cursor" />
         </p>
       </Window>
     </div>
