@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { stepper } from '../../content/pages/stepper';
+import { ticker } from '../../content/pages/ticker';
 import ProjectPage from './ProjectPage';
 
 const meta: Meta<typeof ProjectPage> = {
@@ -11,3 +12,5 @@ const meta: Meta<typeof ProjectPage> = {
 export default meta;
 
 export const Stepper: StoryObj<typeof ProjectPage> = { args: { p: stepper } };
+
+export const Ticker: StoryObj<typeof ProjectPage> = { args: { p: ticker } };

@@ -9,10 +9,10 @@ export const projects: TermItem[] = [
     line: 'Typed execution framework for long-running AI pipelines — the engine under Silky, jobby, and investing-tools.',
   },
   {
-    name: 'investing-tools',
-    href: '#/projects/investing-tools',
-    meta: 'Python · Playwright · MCP · 2026',
-    line: 'Brokerage account data served to agents as one MCP server — positions, quotes, option chains.',
+    name: 'ticker',
+    href: '#/projects/ticker',
+    meta: 'Python · Playwright · MCP · Aug 2026',
+    line: 'An MCP (Model Context Protocol) server that gives any agent my live market data and current positions: portfolio, quotes, option chains.',
   },
   {
     name: 'jobby',
