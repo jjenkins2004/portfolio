@@ -57,14 +57,16 @@ function MediaList({ media }: { media?: Media[] }) {
   );
 }
 
-function Subs({ items }: { items: SubSection[] }) {
+// mediaFirst: features read title → code → explanation; difficulties keep prose first.
+function Subs({ items, mediaFirst = false }: { items: SubSection[]; mediaFirst?: boolean }) {
   return (
     <>
       {items.map((s) => (
         <div className="pg-dec" key={s.title}>
           <h3 className="pg-h3">{s.title}</h3>
+          {mediaFirst && <MediaList media={s.media} />}
           {s.body && <p className="pg-prose">{rich(s.body)}</p>}
-          <MediaList media={s.media} />
+          {!mediaFirst && <MediaList media={s.media} />}
         </div>
       ))}
     </>
@@ -103,7 +105,7 @@ export default function ProjectPage({ p }: { p: ProjectPageData }) {
         <p className="pg-prose">{rich(p.problem.body)}</p>
         <MediaList media={p.problem.media} />
         <h2 className="pg-h">features</h2>
-        <Subs items={p.features} />
+        <Subs items={p.features} mediaFirst />
         <h2 className="pg-h">difficulties</h2>
         <Subs items={p.difficulties} />
         <p className="pg-cd">
