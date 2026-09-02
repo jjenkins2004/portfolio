@@ -12,7 +12,7 @@ export const projects: TermItem[] = [
     name: 'ticker',
     href: '#/projects/ticker',
     meta: 'Python · Playwright · MCP · Aug 2026',
-    line: 'An MCP (Model Context Protocol) server that gives any agent my live market data and current positions: portfolio, quotes, option chains.',
+    line: 'Gives any agent a read-only view of my portfolio, quotes, and option chains, to seamlessly evaluate and consult on my live positions.',
   },
   {
     name: 'jobby',
@@ -21,10 +21,10 @@ export const projects: TermItem[] = [
     line: 'Scrapes LinkedIn and Indeed, ranks every posting against a CV — a Stepper pipeline end to end.',
   },
   {
-    name: 'mcp-github-proxy',
-    href: '#/projects/mcp-github-proxy',
+    name: 'knowledgehub',
+    href: '#/projects/knowledgehub',
     meta: 'TypeScript · MCP · 2026',
-    line: 'Surgical markdown edits across GitHub repos over MCP — every change lands as exactly one commit.',
+    line: 'A shared knowledge base any agent can read and edit from anywhere. Includes enforced structure for fast knowledge retrieval and multi-user support.',
   },
   {
     name: 'more/',

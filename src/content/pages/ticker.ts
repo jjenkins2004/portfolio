@@ -5,7 +5,7 @@ export const ticker: ProjectPageData = {
   slug: 'ticker',
   name: 'ticker',
   dates: 'Aug 2026',
-  line: 'An MCP (Model Context Protocol) server that gives any agent my live market data and current positions: portfolio, quotes, option chains.',
+  line: 'Gives any agent a read-only view of my portfolio, quotes, and option chains, to seamlessly evaluate and consult on my live positions.',
   concepts: 'saved-session auth · read-only by design · self-hosted OAuth',
   stack: 'Python · Playwright · httpx · MCP',
   github: 'github.com/jjenkins2004/ticker',
