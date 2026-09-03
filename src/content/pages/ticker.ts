@@ -10,9 +10,30 @@ export const ticker: ProjectPageData = {
   stack: 'Python · Playwright · httpx · MCP',
   github: 'github.com/jjenkins2004/ticker',
   problem: {
-    body: "Agents have gotten really good at evaluating positions and helping make trading decisions. But there is no connector between an agent and my brokerage, and Robinhood has no way to export current positions either. I was screenshotting the app or typing my trades in by hand, every single conversation. So I built the connector myself. I sign into Robinhood by hand once, in a real browser, and from then on the server reads the account and the live market through Robinhood's own API. Any model gets five typed MCP tools, and there is no code path that can place a trade.",
+    body: "Agents have gotten really good at evaluating positions and helping make trading decisions. But there is no connector between an agent and my brokerage, and Robinhood has no way to export current positions either. I was screenshotting the app or typing my trades in by hand, every single conversation. So I built the connector myself. I sign into Robinhood by hand once, in a real browser, and from then on the server reads the account and the live market through Robinhood's own API. Any model gets five typed MCP tools, read-only on my portfolio.",
   },
   features: [
+    {
+      title: 'in action',
+      media: [
+        {
+          kind: 'chat',
+          turns: [
+            { role: 'user', text: "How's my FIG spread doing?" },
+            {
+              role: 'ai',
+              text: 'Pulling your positions and the quotes on its legs.',
+              tools: ['get_robinhood_positions()', 'get_option_quotes(...)'],
+            },
+            {
+              role: 'ai',
+              text: 'Your Jan 2028 230/260 call spread is worth $762.50 now, up $112.50 from your $650.00 cost basis. The long leg has a 0.61 delta, the short 0.34.',
+            },
+          ],
+        },
+      ],
+      body: 'Every number in the answer comes from the account or the live chain, with nothing typed in by hand.',
+    },
     {
       title: 'agent tools',
       media: [
@@ -69,25 +90,6 @@ $ railway up
     {
       title: 'robinhood auth',
       body: "The other half was getting requests authorized without ever holding my password. The login token lives in the browser's localStorage, which Playwright saves along with cookies, and it's a JWT, so I can check its expiry locally. The API also accepts a bare Authorization header: I got a 200 with the header alone and a 401 without it, so the browser isn't needed for requests at all. The first version drove every call through the signed-in page and took about 20 seconds to pull the portfolio; switching to plain HTTP calls through httpx got it to 1.6. The browser now only refreshes the token: the web app refreshes it on page load, so I open a tab, wait for it to load, close it, and read the new token back out.",
-      media: [
-        {
-          kind: 'pre',
-          pre: `login, once, by hand
-  browser ---- sign in ----> robinhood
-  Playwright saves cookies + localStorage
-  bearer token (a JWT) written to disk
-
-every read after that (browser stays closed)
-  server --- GET, Authorization: Bearer <jwt> ---> robinhood API
-  server <------------- 200 + positions JSON ----
-  (no header? 401. the token alone is enough)
-
-token near expiry (expiry read from the JWT, no network)
-  server opens a tab from the saved session
-  page refreshes its own token on load
-  server reads the new token, closes the tab`,
-        },
-      ],
     },
   ],
 };
