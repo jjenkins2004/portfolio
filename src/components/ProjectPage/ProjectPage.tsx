@@ -102,7 +102,11 @@ export default function ProjectPage({ p }: { p: ProjectPageData }) {
           </p>
         </div>
         <h2 className="pg-h">problem</h2>
-        <p className="pg-prose">{rich(p.problem.body)}</p>
+        {p.problem.body.split('\n\n').map((para, i) => (
+          <p className="pg-prose" key={i}>
+            {rich(para)}
+          </p>
+        ))}
         <MediaList media={p.problem.media} />
         <h2 className="pg-h">features</h2>
         <Subs items={p.features} mediaFirst />
