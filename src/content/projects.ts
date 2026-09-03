@@ -24,7 +24,7 @@ export const projects: TermItem[] = [
     name: 'knowledgehub',
     href: '#/projects/knowledgehub',
     meta: 'TypeScript · MCP · 2026',
-    line: 'A shared knowledge base any agent can read and edit from anywhere. Includes enforced structure for fast knowledge retrieval and multi-user support.',
+    line: 'A shared knowledge base any AI agent can read and edit from anywhere. Includes enforced structure for fast knowledge retrieval and multi-user support.',
   },
   {
     name: 'more/',

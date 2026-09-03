@@ -1,39 +1,69 @@
 import type { ProjectPageData } from '../../components/ProjectPage/ProjectPage';
 
-// Draft wording — Joshua rewrites in his voice.
 export const knowledgehub: ProjectPageData = {
   slug: 'knowledgehub',
   name: 'KnowledgeHub',
   dates: 'Aug 2026',
-  line: 'A shared knowledge base any agent can read and edit from anywhere. Includes enforced structure for fast knowledge retrieval and multi-user support.',
+  line: 'A shared knowledge base any AI agent can read and edit from anywhere. Includes enforced structure for fast knowledge retrieval and multi-user support.',
   concepts: 'all-or-nothing commits · edit by heading · zero dependencies',
   stack: 'TypeScript · Node · MCP · Docker',
   github: 'github.com/jjenkins2004/knowledgehub',
   problem: {
-    body: "KnowledgeHub started at [Silky](#/experience/silky). Keeping two separate sets of notes in sync by hand was a pain. A client texted me, I forwarded it to my cofounder, he updated his notes, I updated mine. All of that happened on our phones, multiple times a day. We wanted to dump knowledge in, have an AI parse out the important points, and push them to a shared base. Surprisingly, there weren't any easy existing solutions. An agent reading and writing Google Drive directly is janky. Notion costs a subscription, and an agent writes into it through a block API instead of plain text files. A repo cloned to my laptop only exists on my laptop, and a phone can't run git.\n\nSo I built it myself. The base is a GitHub repo of markdown files with a small server in front. I went with GitHub instead of building my own storage because it was the fastest way to get something working. It's an ecosystem we already knew, hosting is free, and edit history comes built in. My coding agent and the AI on my phone could now read and edit the same knowledge base. It has since grown past Silky. My investing research, cooking recipes, and tennis lessons live there too.",
+    body: "KnowledgeHub started at [Silky](#/experience/silky). Keeping two separate sets of notes in sync by hand was a pain. A client texted me, I forwarded it to my cofounder, he updated his notes, I updated mine. All of that happened on our phones, multiple times a day. We wanted to dump knowledge in, have an AI parse out the important points, and push them to a shared base. Surprisingly, there weren't any easy existing solutions. An agent reading and writing Google Drive directly is janky. Notion costs a subscription, and an agent writes into it through a block API instead of plain text files. A repo cloned to my laptop only exists on my laptop, and a phone can't run git.\n\nSo I built it myself. The base is a GitHub repo of markdown files with a small server in front. I went with GitHub instead of building my own storage because it was the fastest way to get something working. It's an ecosystem we already knew, hosting is free, and edit history comes built in. My coding agent and the AI on my phone could now read and edit the same knowledge base. It has since grown past Silky. My investing research, cooking recipes, and tennis lessons each live in their own repo now.",
     media: [
       {
         kind: 'pre',
-        pre: `the pieces
-  any MCP client       the agent side, anything that speaks MCP
-  knowledgehub         one container, no database
-  api.github.com       GitHub's REST API, no git binary anywhere
-
-every tool call, one hop each way
-  client --- MCP tool call ------> server
-  server --- REST, with a PAT ---> api.github.com
-  server <-- JSON ---------------- api.github.com
-  client <-- tool result --------- server
-
-what the middle holds
-  the server speaks MCP itself and runs its own OAuth sign-in
-  the secret typed at connect time picks which GitHub PAT is used
-  no state but in-memory caches: restart it and nothing is lost`,
-        caption: "PAT = a GitHub personal access token; its scopes, set on GitHub's side, are the only permission boundary.",
+        pre: `  agent --- ((tool call)) --> {{knowledgehub}} --- reads, writes -->  /\\_/\\
+                                                             ( o.o )
+  agent <-- [[result]] ------ {{knowledgehub}} <-- new commit ------  > ^ <
+                                                              github`,
+        caption: 'The agent talks to the server over MCP, the open standard that lets any AI agent call outside tools. The server does every read and write against GitHub.',
       },
     ],
   },
   features: [
+    {
+      title: 'in action',
+      media: [
+        {
+          kind: 'chat',
+          turns: [
+            {
+              role: 'user',
+              text: 'Call with the client just ended. They want the sizing table in inches, not cm. Save that.',
+            },
+            {
+              role: 'ai',
+              text: 'On it. Checking what the base already says about sizing.',
+              tools: ['overview(repo: "silky")', 'read_md(repo: "silky", "clients/acme.md")'],
+            },
+            {
+              role: 'ai',
+              text: 'Saved as one commit to silky. The sizing section of clients/acme.md now reads in inches.',
+              tools: ['commit_edits({ message: "acme: sizing in inches", edits: [...] })'],
+            },
+          ],
+        },
+      ],
+      body: 'The agent reads the base before it writes.',
+    },
+    {
+      title: 'enforced structure',
+      media: [
+        {
+          kind: 'pre',
+          pre: `                     {{silky/}}
+                     [[INDEX.md]]
+                        │
+      ┌─────────────────┼────────────────┐
+  {{clients/}}          {{projects/}}        {{meetings/}}
+  [[INDEX.md]]          [[INDEX.md]]         2026-08.md
+  acme.md           redesign.md
+  birch.md`,
+        },
+      ],
+      body: "Every repo starts with an INDEX.md at its root, and folders can carry their own. create_repo refuses to create a repo without one, and overview returns it verbatim on every call. The agent is told to keep it current whenever it restructures anything. File names alone don't say what's inside, so the index spells out which file answers which question. That matters most on writes. New knowledge lands in the file where it belongs, instead of every agent inventing its own filing until the base rots into scattered notes. Every path also comes back with its size, so a read can skip a big file it does not need.",
+    },
     {
       title: 'agent tools',
       media: [
@@ -48,7 +78,22 @@ commit_edits   up to 100 edits across files, one commit
 create_repo    a new repo, seeded with its index file`,
         },
       ],
-      body: "These seven tools let an agent work in a repo without ever cloning it. overview is the entry point: one call returns the repo's index file verbatim plus the full file list, so the model knows where things live before it reads anything.",
+      body: "These seven tools let an agent work in a repo without ever cloning it.",
+    },
+    {
+      title: 'edit by heading',
+      media: [
+        {
+          kind: 'pre',
+          lang: 'typescript',
+          pre: `{ op: "edit_section", heading: "Install", mode: "replace", ... }
+
+// two sections named Install? address by path or by occurrence
+{ op: "edit_section", heading: "Guide > Install", ... }
+{ op: "edit_section", heading: "Install#2", ... }`,
+        },
+      ],
+      body: "An edit_section op, one of the edits a commit_edits batch can carry, points at a heading instead of rewriting the file. A section runs from its heading to the next one at the same or a shallower level, and the mode says what to do with it: replace it, append to it, prepend to it, or delete it. I picked headings over str_replace and line numbers. Replacing a section through str_replace means quoting the whole thing back character for character, and one whitespace difference is a miss. Line numbers go stale the moment anyone else commits, and models miscount them anyway. A heading name survives both. It also matches how a knowledge base is organized, so 'update the sizing section of acme.md' is exactly one call. When a name matches more than one place, the server refuses and lists every candidate with its full path rather than guessing which one was meant.",
     },
     {
       title: 'one commit per change',
@@ -71,83 +116,32 @@ create_repo    a new repo, seeded with its index file`,
 })`,
           caption: 'A real batch from the test suite. It touches three files and lands as a single commit.',
         },
-        {
-          kind: 'pre',
-          pre: `what one commit_edits call sends
-
-plan      only GET requests, nothing on github changes yet
-  read the branch pointer, its head commit, the old file tree
-  read every file the batch touches
-  apply all edits in memory, validate every op
-  any failure stops here, zero write requests sent
-
-execute   the same three write requests, every time
-  POST /git/trees      the new file tree, built on the old one
-  POST /git/commits    the new commit pointing at that tree
-  PATCH /git/refs      the branch move, with force:false
-                       github refuses it if anyone pushed first`,
-        },
       ],
-      body: "The server reads everything the batch needs first, applies all of it in memory, and only then sends GitHub the same three write requests every time: the new file tree, the new commit, and the branch move. There is no pending state anywhere: a file keeps its old contents until commit_edits returns the finished commit. Deleting a file, or replacing its entire contents, requires expect_sha, a fingerprint of the file as it currently stands, so the model can never destroy content it has not looked at.",
-    },
-    {
-      title: 'edit by heading',
-      media: [
-        {
-          kind: 'pre',
-          lang: 'typescript',
-          pre: `{ op: "edit_section", heading: "Install", mode: "replace", ... }
-
-// two sections named Install? address by path or by occurrence
-{ op: "edit_section", heading: "Guide > Install", ... }
-{ op: "edit_section", heading: "Install#2", ... }`,
-        },
-      ],
-      body: "The model points at a heading instead of rewriting the file. A section runs to the next heading at the same or a shallower level, and when a name matches more than one place, the server refuses and lists every candidate with its full path rather than guessing which one was meant.",
-    },
-    {
-      title: 'when an edit misses',
-      media: [
-        {
-          kind: 'pre',
-          pre: `Nothing was committed — 1 operation(s) could not be applied,
-and this tool is all-or-nothing.
-
-• edits[0] (str_replace guide.md): No replacement was performed:
-  old_string did not appear verbatim in guide.md.
-Did you mean to match one of these actual lines from guide.md?
-  line 7: step 1
-
-This batch is held as retry_ref r_b99c0a — resend it unchanged with
-commit_edits({message, retry_ref:"r_b99c0a"}) once the cause is fixed.`,
-          caption: 'Real output from a failed batch. The server never fuzzy-matches, because a wrong guess about which bytes to overwrite corrupts the file silently.',
-        },
-      ],
-      body: "A missed match comes back with more than a bare error. The server checks whether the replacement text is already in the file, since the edit may have landed on an earlier try, and suggests the closest real lines to what the model was hunting for. The failed batch is held for 30 minutes under a retry_ref, so a fixed version can be resent without retyping every edit. The test suite runs 350 assertions against a fake GitHub built into the tests, and 63 of them pin down bugs found by deliberately trying to break the server.",
+      body: "The first version of this server was a passthrough to GitHub's own MCP tools, and those make a separate commit for every file they write, so one logical change came out as a trail of commits. Now every edit in a batch is applied in memory first, and either the whole batch lands as one commit or nothing is written. Deleting or overwriting a whole file also requires expect_sha, a fingerprint of the file as it currently stands, so the agent can never destroy content it has not looked at.",
     },
   ],
   difficulties: [
     {
-      title: 'finding a heading',
+      title: 'no native inline edits',
       media: [
         {
           kind: 'pre',
           pre: `---
 title: notes
----            a legal setext underline: a naive scan turns
+---            a legal heading underline: a naive scan turns
                "title: notes" into a heading
 
 <!-- toc -->   opens AND closes an HTML block on the same line
 
     # indented four spaces, so this is code, not a heading`,
-          caption: 'Three markdown lines that fool a naive heading scan.',
+          caption: 'The three cases that forced the parser.',
         },
       ],
-      body: "edit_section needs to know where every section starts, and a regex for lines starting with # gets that wrong in ways that eat real content. YAML front matter, the metadata block at the top of many markdown files, ends with three dashes. Three dashes are also legal markdown for underlining a heading, so a naive scan invents a heading named after the last line of the front matter, and an edit lands inside it. The worst case was HTML. In CommonMark, the standard markdown spec, a one-line `<!-- toc -->` comment opens and closes an HTML block on the same line. Until I tested the end condition on the opening line itself, that comment wedged the scanner open to the end of the file. Every heading after it disappeared, and editing the section before it deleted the rest of the document. So the heading scanner grew into a small CommonMark block parser that tracks code fences, indented code, blockquotes, underline-style headings, and all seven HTML block types.",
+      body: "GitHub's API cannot edit part of a file. The contents API takes a whole new file body, and the lower level git data API also only deals in whole files. Every edit tool the server offers is really an in-memory transform: fetch the current bytes, apply the change myself, hand the whole result back. That layer grew to about 960 lines, written from scratch because the server has zero dependencies. The matching half is strict. An old_string, the exact text an edit wants replaced, has to appear verbatim and exactly once or the server refuses and lists every line it found. The markdown half became a small CommonMark block parser, because a naive scan for lines starting with # gets fooled. YAML front matter, the metadata block at the top of a markdown file, ends in three dashes, which is also legal markdown for underlining a heading. And a one-line `<!-- toc -->` comment once wedged the scanner open to the end of the file, so editing the section before it deleted the rest of the document. Putting bytes back was its own problem: real files mix line ending styles, open with an invisible byte order mark, or end without a final newline, and the obvious split-and-join rewrites every one of those. So the document model remembers the exact terminator of every line, and an edit only changes the lines it touched.",
     },
     {
-      title: 'races against github',
-      body: "Three different race conditions show up when the writer is an HTTP API instead of a local clone. The simplest one, two writers pushing at the same time, is handled by GitHub itself: the server moves the branch pointer without force, and GitHub refuses the move if someone else pushed first. The retry after that refusal is the trap. Operations like str_replace carry no expected file version, so replaying them on top of the other person's newer commit could quietly overwrite their work and still report success. Instead the server compares its before and after snapshots and refuses the retry if any file the batch touches has changed, and it hands back the new contents so the edit can be rewritten against them. The read-your-own-writes race actually bit me: for a few seconds after a push, asking GitHub where the branch points can still return the old commit, so a second edit got planned against a commit the server itself had just replaced, and a file created moments earlier looked like it did not exist. The fix is to remember the last SHA the server pushed to each branch and re-poll up to three times, at 300, 600, then 900 milliseconds, until GitHub shows a commit at least that new.",
+      title: 'preventing racing writes',
+      body: "Two people can push to the same branch at the same time, and GitHub itself catches that much: the server moves the branch pointer without force, and GitHub refuses the move if someone else pushed first. The dangerous part is the retry. Edits like str_replace carry no file version, so replaying one on top of the other person's newer commit would quietly overwrite their work and still report success. My test probe caught the server doing exactly that. The fix is to snapshot the blob SHA of every file the batch of edits touches. A blob SHA is git's fingerprint for one file's exact contents. On a retry the server compares those fingerprints between the two attempts, and if any touched file changed it refuses and sends back the file's new contents so the edit can be rewritten against them. It compares per-file fingerprints instead of the branch pointer on purpose, since the pointer moves when anyone pushes anything, and that would turn every unrelated push into a failure. If the other person's commit touched none of the batch's files, the retry just rebuilds on top of their commit and lands.",
     },
   ],
 };
