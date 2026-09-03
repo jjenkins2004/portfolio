@@ -7,9 +7,12 @@ import './ProjectPage.css';
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('typescript', typescript);
 
+export type ChatTurn = { role: 'user' | 'ai'; text: string; tools?: string[] };
+
 export type Media =
   | { kind: 'pre'; pre: string; caption?: string; lang?: 'python' | 'typescript' } // code (highlighted when lang set) or ascii diagram
-  | { kind: 'img'; src: string; alt: string; caption?: string };
+  | { kind: 'img'; src: string; alt: string; caption?: string }
+  | { kind: 'chat'; turns: ChatTurn[]; caption?: string }; // an example conversation: user bubbles right, ai dot-rows left
 
 // One titled sub-section; features and difficulties are both lists of these.
 export type SubSection = { title: string; body?: string; media?: Media[] };
@@ -27,9 +30,55 @@ export type ProjectPageData = {
   difficulties: SubSection[];
 };
 
-// `code` spans in body text render as pink inline-code chips.
+function links(text: string, key: number) {
+  const out: React.ReactNode[] = [];
+  const re = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text))) {
+    if (m.index > last) out.push(text.slice(last, m.index));
+    out.push(
+      <a key={`${key}-${m.index}`} href={m[2]}>
+        {m[1]}
+      </a>,
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+}
+
+// `code` spans in body text render as inline-code chips; [text](href) renders as a link.
 function rich(text: string) {
-  return text.split('`').map((part, i) => (i % 2 ? <code key={i}>{part}</code> : part));
+  return text.split('`').map((part, i) => (i % 2 ? <code key={i}>{part}</code> : links(part, i)));
+}
+
+// In an unhighlighted pre: {{text}} = accent span, [[text]] = green span, ((text)) = amber span.
+function preContent(text: string) {
+  const parts = text.split(/(\{\{.*?\}\}|\[\[.*?\]\]|\(\(.*?\)\))/g);
+  if (parts.length === 1) return text;
+  return parts.map((p, i) => {
+    if (i % 2 === 0) return p;
+    if (p.startsWith('{{') && p.endsWith('}}'))
+      return (
+        <span key={i} className="pg-hl">
+          {p.slice(2, -2)}
+        </span>
+      );
+    if (p.startsWith('[[') && p.endsWith(']]'))
+      return (
+        <span key={i} className="pg-hl-go">
+          {p.slice(2, -2)}
+        </span>
+      );
+    if (p.startsWith('((') && p.endsWith('))'))
+      return (
+        <span key={i} className="pg-hl-sun">
+          {p.slice(2, -2)}
+        </span>
+      );
+    return p;
+  });
 }
 
 function MediaList({ media }: { media?: Media[] }) {
@@ -42,8 +91,34 @@ function MediaList({ media }: { media?: Media[] }) {
             {m.lang ? (
               <pre className="pg-pre" dangerouslySetInnerHTML={{ __html: hljs.highlight(m.pre, { language: m.lang }).value }} />
             ) : (
-              <pre className="pg-pre">{m.pre}</pre>
+              <pre className="pg-pre">{preContent(m.pre)}</pre>
             )}
+            {m.caption && <p className="pg-cap">{m.caption}</p>}
+          </div>
+        ) : m.kind === 'chat' ? (
+          <div className="pg-media" key={i}>
+            <div className="pg-chat">
+              {m.turns.map((t, j) =>
+                t.role === 'user' ? (
+                  <div className="pg-chat-user" key={j}>
+                    {t.text}
+                  </div>
+                ) : (
+                  <div className="pg-chat-ai" key={j}>
+                    <span className="pg-chat-row">
+                      <span className="pg-chat-dot">●</span>
+                      <span className="pg-chat-text">{t.text}</span>
+                    </span>
+                    {t.tools?.map((tool, k) => (
+                      <span className="pg-chat-row" key={k}>
+                        <span className="pg-chat-dot pg-chat-dot-go">●</span>
+                        <span className="pg-chat-tool">{tool}</span>
+                      </span>
+                    ))}
+                  </div>
+                ),
+              )}
+            </div>
             {m.caption && <p className="pg-cap">{m.caption}</p>}
           </div>
         ) : (

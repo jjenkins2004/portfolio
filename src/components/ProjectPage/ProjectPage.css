@@ -20,6 +20,20 @@
 /* text */
 .pg-prose { font-family: var(--font-body); font-size: var(--text-base); line-height: 1.55; max-width: 72ch; }
 .pg-prose code, .pg-lede code { font-family: var(--font-mono); font-size: 0.85em; background: var(--accent-soft); color: var(--ink); padding: 0.08em 0.4em; border-radius: var(--radius); white-space: nowrap; }
+.pg-prose a, .pg-lede a { color: var(--accent); text-underline-offset: 0.2em; }
+.pg-pre .pg-hl { color: var(--accent); font-weight: 600; }
+.pg-pre .pg-hl-go { color: var(--go); font-weight: 600; }
+.pg-pre .pg-hl-sun { color: var(--sun); font-weight: 600; }
+
+.pg-chat { display: flex; flex-direction: column; gap: var(--space-3); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-4); }
+.pg-chat-user { align-self: flex-end; max-width: 80%; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--ink); padding: 0.6rem 0.95rem; border-radius: 14px 14px 4px 14px; font-family: var(--font-body); font-size: var(--text-sm); line-height: 1.45; }
+.pg-chat-ai { align-self: flex-start; max-width: 90%; display: flex; flex-direction: column; gap: var(--space-3); }
+.pg-chat-user + .pg-chat-ai { margin-top: 0.5rem; }
+.pg-chat-row { display: flex; gap: 0.6rem; align-items: baseline; }
+.pg-chat-dot { color: var(--ink-muted); opacity: 0.55; font-size: 0.66em; }
+.pg-chat-dot-go { color: var(--go); opacity: 1; }
+.pg-chat-text { font-family: var(--font-body); font-size: var(--text-sm); line-height: 1.45; }
+.pg-chat-tool { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-muted); }
 .pg-cap { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-muted); }
 .pg-mono { font-family: var(--font-mono); font-size: var(--text-sm); }
 

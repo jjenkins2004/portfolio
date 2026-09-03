@@ -10,6 +10,8 @@
   --accent-soft: rgba(81, 64, 184, 0.1);
   --pop: #ffb3d1;
   --pop-ink: #1a0710;
+  --go: #1a7f37;
+  --sun: #9a6700;
 
   --font-display: 'Barlow Condensed', system-ui, -apple-system, sans-serif;
   --font-body: 'Barlow', system-ui, -apple-system, sans-serif;
@@ -52,6 +54,8 @@
     --accent-soft: rgba(170, 162, 244, 0.12);
     --pop: #ffb8d4;
     --pop-ink: #1a0710;
+    --go: #3fb950;
+    --sun: #d29922;
   }
 }
 
@@ -66,4 +70,6 @@
   --accent-soft: rgba(170, 162, 244, 0.12);
   --pop: #ffb8d4;
   --pop-ink: #1a0710;
+  --go: #3fb950;
+  --sun: #d29922;
 }
