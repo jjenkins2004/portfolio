@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ProjectPage from './components/ProjectPage/ProjectPage';
 import TermSection from './components/TermSection/TermSection';
 import Window from './components/TermSection/Window';
 import { elsewhere } from './content/elsewhere';
 import { experience } from './content/experience';
 import { pages } from './content/pages';
+import { profile } from './content/profile';
 import { projects } from './content/projects';
 import { Home } from './sections/home/Home';
 
@@ -16,6 +17,147 @@ function useHash() {
     return () => window.removeEventListener('hashchange', on);
   }, []);
   return hash;
+}
+
+const SLIDES = ['home', 'projects', 'experience', 'elsewhere'];
+
+const initialSlide = () => {
+  const id = window.location.hash.slice(1);
+  return SLIDES.includes(id) ? id : 'home';
+};
+
+function useMedia(q: string) {
+  const [m, setM] = useState(() => window.matchMedia(q).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(q);
+    const on = () => setM(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, [q]);
+  return m;
+}
+
+/**
+ * Wide screens: the document scrolls across one invisible 100vh step per slide while the
+ * slides sit fixed and crossfade. Fade is a pure function of scroll position; gestures,
+ * momentum and settling are the browser's native scroll + scroll-snap physics — no wheel
+ * hijacking, no locks, no gesture inference.
+ */
+function useDeck(on: boolean) {
+  const [active, setActive] = useState(initialSlide);
+  const current = useRef(active);
+  useEffect(() => {
+    current.current = active;
+  }, [active]);
+
+  useEffect(() => {
+    if (!on) return;
+    let raf = 0;
+    const stepH = () => document.querySelector('.step')?.getBoundingClientRect().height || window.innerHeight;
+    const paint = () => {
+      raf = 0;
+      const p = Math.min(Math.max(window.scrollY / stepH(), 0), SLIDES.length - 1);
+      const i = Math.floor(p);
+      const f = p - i;
+      // fade with a buffer, never two slides overlaid: outgoing is gone by 30% of the
+      // step, incoming starts at 70%, bare background between
+      const out = Math.max(0, 1 - f / 0.3);
+      const inc = Math.max(0, (f - 0.7) / 0.3);
+      SLIDES.forEach((id, k) => {
+        const el = document.getElementById(`s-${id}`);
+        if (!el) return;
+        const op = k === i ? out : k === i + 1 ? inc : 0;
+        el.style.opacity = String(op);
+        el.style.visibility = op > 0.001 ? 'visible' : 'hidden';
+      });
+      const near = SLIDES[Math.round(p)];
+      if (near !== current.current) {
+        setActive(near);
+        history.replaceState(null, '', `#${near}`);
+      }
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(paint);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const dir = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1
+        : ['ArrowUp', 'PageUp'].includes(e.key) ? -1 : 0;
+      if (!dir) return;
+      e.preventDefault();
+      const h = stepH();
+      const i = Math.round(window.scrollY / h) + dir;
+      if (i < 0 || i >= SLIDES.length) return;
+      window.scrollTo({ top: i * h });
+    };
+    paint();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [on]);
+  return active;
+}
+
+/** Narrow or short screens: plain stacked sections, native scrolling; track which section owns the viewport for the nav. */
+function useFlatActive(on: boolean) {
+  const [active, setActive] = useState(initialSlide);
+  const current = useRef(active);
+  useEffect(() => {
+    current.current = active;
+  }, [active]);
+
+  useEffect(() => {
+    if (!on) return;
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const mid = window.innerHeight / 2;
+      let cur = SLIDES[0];
+      for (const id of SLIDES) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= mid) cur = id;
+      }
+      if (cur !== current.current) setActive(cur);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [on]);
+  return active;
+}
+
+function Section({ id }: { id: string }) {
+  if (id === 'home') return <Home />;
+  if (id === 'projects') return <TermSection dir="projects" items={projects} />;
+  if (id === 'experience') return <TermSection dir="experience" items={experience} />;
+  return <TermSection dir="elsewhere" items={elsewhere} />;
+}
+
+function SiteNav({ active }: { active: string }) {
+  return (
+    <nav className="site-nav mono">
+      <span>~{active === 'home' ? '' : `/${active}`}</span>
+      <ul>
+        {profile.sections.map((s) => (
+          <li key={s.id}>
+            <a href={`#${s.id}`} aria-current={active === s.id ? 'true' : undefined}>{s.id}/</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
 }
 
 function NotFound({ path }: { path: string }) {
@@ -37,25 +179,45 @@ function NotFound({ path }: { path: string }) {
 export default function App() {
   const hash = useHash();
   const route = hash.match(/^#\/(projects|experience|elsewhere)\/([\w-]+)$/);
+  const flat = useMedia('(max-width: 960px), (max-height: 720px)');
+  const deckActive = useDeck(!route && !flat);
+  const flatActive = useFlatActive(!route && flat);
   if (route) {
     const [, section, slug] = route;
     if (section === 'projects' && pages[slug]) return <ProjectPage p={pages[slug]} />;
     return <NotFound path={section + '/' + slug} />;
   }
+  if (flat) {
+    return (
+      <>
+        <SiteNav active={flatActive} />
+        <main>
+          {SLIDES.map((id) => (
+            <section className="flat" id={id} key={id}>
+              <Section id={id} />
+            </section>
+          ))}
+        </main>
+      </>
+    );
+  }
   return (
-    <main className="snap">
-      <section className="slide">
-        <Home />
-      </section>
-      <section className="slide" id="projects">
-        <TermSection dir="projects" items={projects} />
-      </section>
-      <section className="slide" id="experience">
-        <TermSection dir="experience" items={experience} />
-      </section>
-      <section className="slide" id="elsewhere">
-        <TermSection dir="elsewhere" items={elsewhere} />
-      </section>
-    </main>
+    <>
+      <SiteNav active={deckActive} />
+      <main className="deck">
+        <div className="stack">
+          {SLIDES.map((id) => (
+            <section className={deckActive === id ? 'slide is-active' : 'slide'} id={`s-${id}`} key={id}>
+              <Section id={id} />
+            </section>
+          ))}
+        </div>
+        <div aria-hidden="true">
+          {SLIDES.map((id) => (
+            <div className="step" id={id} key={id} />
+          ))}
+        </div>
+      </main>
+    </>
   );
 }

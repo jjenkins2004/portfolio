@@ -65,14 +65,6 @@ export function Home() {
 
   return (
     <div className="home">
-      <nav className="home-nav mono">
-        <span>~</span>
-        <ul>
-          {profile.sections.map((s) => (
-            <li key={s.id}><a href={`#${s.id}`}>{s.id}/</a></li>
-          ))}
-        </ul>
-      </nav>
       <main className="home-main">
         <div className="home-left">
           <h1 className="home-name">{profile.first}<br />{profile.last}</h1>

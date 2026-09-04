@@ -26,8 +26,15 @@ src/components/          shared pieces, each with a colocated *.stories.tsx; Pal
 
 ## Page structure
 
-Single route as full-viewport slides with scroll snap: Home (name, identity, links; shell run with facts and
-section jumps) · Projects · Experience · Elsewhere — the last three each a TermSection terminal window (tree ~/jjenkins/<dir>). A featured project opens its own page at #/projects/<slug> (ProjectPage; stepper, ticker, knowledgehub so far); unknown slugs get a terminal not-found.
+Single route as a stacked full-viewport slideshow — nothing moves between sections: Home (name, identity, links; shell run
+with facts and section jumps) · Projects · Experience · Elsewhere — the last three each a TermSection terminal window
+(tree ~/jjenkins/<dir>). On wide screens the document scrolls over invisible 25vh snap steps while the slides sit in a fixed
+stack and fade through the background (outgoing gone by 30% of the step, incoming from 70% — never two slides overlaid) —
+fade is a pure function of scroll position, gestures/momentum/settling are native scroll-snap physics
+(App's useDeck; step height in index.css sets how much scroll a transition takes). Narrow or short screens (≤960px wide or
+≤720px tall) render plain stacked sections with native scrolling instead (useFlatActive tracks the section for the nav).
+A fixed mono header overlays both (App's SiteNav): the left path tracks the active slide (`~`, `~/projects`, …) and the
+active section link lights up. A featured project opens its own page at #/projects/<slug> (ProjectPage; stepper, ticker, knowledgehub so far); unknown slugs get a terminal not-found.
 Content lives in `src/content/` as data, never inline in a section.
 
 ## Palette
