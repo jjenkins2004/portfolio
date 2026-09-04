@@ -15,21 +15,20 @@ export const projects: TermItem[] = [
     line: 'Gives any agent a read-only view of my portfolio, quotes, and option chains, to seamlessly evaluate and consult on my live positions.',
   },
   {
-    name: 'jobby',
-    href: '#/projects/jobby',
-    meta: 'Python · Playwright · Stepper · 2026',
-    line: 'Scrapes LinkedIn and Indeed, ranks every posting against a CV — a Stepper pipeline end to end.',
-  },
-  {
     name: 'knowledgehub',
     href: '#/projects/knowledgehub',
     meta: 'TypeScript · MCP · 2026',
     line: 'A shared knowledge base any AI agent can read and edit from anywhere. Includes enforced structure for fast knowledge retrieval and multi-user support.',
   },
   {
+    name: 'clipirl',
+    href: '#/projects/clipirl',
+    meta: 'Swift · SwiftUI · May 2024 - Mar 2025',
+    line: 'An iOS recorder that saves the moment after it already happened. It keeps the last few minutes of audio in memory, and one tap saves a clip of 5 seconds to 5 minutes.',
+  },
+  {
     name: 'more/',
     children: [
-      { name: 'clipirl', href: '#/projects/clipirl', note: 'iOS background audio recorder — a circular buffer that saves the moment after it happens.' },
       { name: 'mista-tet', href: '#/projects/mista-tet', note: 'Tetris rebuilt from scratch in C++ — as a boss fight.' },
       { name: 'swiftquill', href: '#/projects/swiftquill', note: 'Native Swift library: Quill Deltas to NSAttributedString.' },
     ],

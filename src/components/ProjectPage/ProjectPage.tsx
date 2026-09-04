@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import hljs from 'highlight.js/lib/core';
 import python from 'highlight.js/lib/languages/python';
 import typescript from 'highlight.js/lib/languages/typescript';
@@ -9,10 +10,14 @@ hljs.registerLanguage('typescript', typescript);
 
 export type ChatTurn = { role: 'user' | 'ai'; text: string; tools?: string[] };
 
+export type VideoClip = { src: string; cap?: string };
+
 export type Media =
   | { kind: 'pre'; pre: string; caption?: string; lang?: 'python' | 'typescript' } // code (highlighted when lang set) or ascii diagram
+  | { kind: 'anim'; frames: string[]; ms?: number; caption?: string } // looping ascii animation; frames share one fixed size
   | { kind: 'img'; src: string; alt: string; caption?: string }
-  | { kind: 'chat'; turns: ChatTurn[]; caption?: string }; // an example conversation: user bubbles right, ai dot-rows left
+  | { kind: 'chat'; turns: ChatTurn[]; caption?: string } // an example conversation: user bubbles right, ai dot-rows left
+  | { kind: 'video'; clips: VideoClip[]; caption?: string }; // phone screen recordings in one row, muted loop, device bezel
 
 // One titled sub-section; features and difficulties are both lists of these.
 export type SubSection = { title: string; body?: string; media?: Media[] };
@@ -81,18 +86,52 @@ function preContent(text: string) {
   });
 }
 
+function AnimBlock({ frames, ms = 450 }: { frames: string[]; ms?: number }) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setI((v) => (v + 1) % frames.length), ms);
+    return () => clearInterval(t);
+  }, [frames.length, ms]);
+  return <pre className="pg-pre">{preContent(frames[i])}</pre>;
+}
+
+function VideoRow({ clips }: { clips: VideoClip[] }) {
+  return (
+    <div className="pg-vids">
+      {clips.map((c) => (
+        <figure className="pg-vid" key={c.src}>
+          <div className="pg-vid-frame">
+            <video src={c.src} muted autoPlay loop playsInline />
+          </div>
+          {c.cap && <figcaption className="pg-cap">{c.cap}</figcaption>}
+        </figure>
+      ))}
+    </div>
+  );
+}
+
 function MediaList({ media }: { media?: Media[] }) {
   if (!media?.length) return null;
   return (
     <>
       {media.map((m, i) =>
-        m.kind === 'pre' ? (
+        m.kind === 'anim' ? (
+          <div className="pg-media" key={i}>
+            <AnimBlock frames={m.frames} ms={m.ms} />
+            {m.caption && <p className="pg-cap">{m.caption}</p>}
+          </div>
+        ) : m.kind === 'pre' ? (
           <div className="pg-media" key={i}>
             {m.lang ? (
               <pre className="pg-pre" dangerouslySetInnerHTML={{ __html: hljs.highlight(m.pre, { language: m.lang }).value }} />
             ) : (
               <pre className="pg-pre">{preContent(m.pre)}</pre>
             )}
+            {m.caption && <p className="pg-cap">{m.caption}</p>}
+          </div>
+        ) : m.kind === 'video' ? (
+          <div className="pg-media" key={i}>
+            <VideoRow clips={m.clips} />
             {m.caption && <p className="pg-cap">{m.caption}</p>}
           </div>
         ) : m.kind === 'chat' ? (

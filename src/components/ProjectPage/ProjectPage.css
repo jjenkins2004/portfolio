@@ -44,6 +44,12 @@
 .pg-shot { margin: 0; display: grid; gap: var(--space-2); }
 .pg-shot img { max-width: 42rem; display: block; border: 1px solid var(--line); border-radius: var(--radius); }
 
+/* video row: phone screen recordings in a hardware-dark bezel, same in both themes */
+.pg-vids { display: flex; flex-wrap: wrap; gap: var(--space-4); width: 100%; align-items: flex-start; }
+.pg-vid { margin: 0; flex: 1 1 0; min-width: 8.5rem; max-width: 13rem; display: grid; gap: var(--space-2); justify-items: center; }
+.pg-vid-frame { width: 100%; background: #14141a; border: 1px solid var(--line); border-radius: 1.9rem; padding: 0.45rem; }
+.pg-vid video { display: block; width: 100%; border-radius: 1.5rem; }
+
 /* code highlighting, mapped to the palette (both themes) */
 .pg-pre .hljs-keyword, .pg-pre .hljs-built_in { color: var(--accent); font-weight: 500; }
 .pg-pre .hljs-string { color: var(--accent-strong); }
