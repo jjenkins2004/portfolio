@@ -6,13 +6,13 @@ export const projects: TermItem[] = [
     href: '#/projects/stepper',
     meta: 'Python · AsyncIO · Jul 2026 – now',
     hot: true,
-    line: 'Typed execution framework for long-running AI pipelines — the engine under Silky, jobby, and investing-tools.',
+    line: 'Checkpointed, step-based execution for long-running Python pipelines. The execution framework behind a lot of my other projects.',
   },
   {
     name: 'ticker',
     href: '#/projects/ticker',
     meta: 'Python · Playwright · MCP · Aug 2026',
-    line: 'Gives any agent a read-only view of my portfolio, quotes, and option chains, to seamlessly evaluate and consult on my live positions.',
+    line: 'Gives any agent a read-only view of my portfolio, quotes, and option chains, to evaluate and consult on my live positions.',
   },
   {
     name: 'knowledgehub',
@@ -29,8 +29,8 @@ export const projects: TermItem[] = [
   {
     name: 'more/',
     children: [
-      { name: 'mista-tet', href: '#/projects/mista-tet', note: 'Tetris rebuilt from scratch in C++ — as a boss fight.' },
-      { name: 'swiftquill', href: '#/projects/swiftquill', note: 'Native Swift library: Quill Deltas to NSAttributedString.' },
+      { name: 'mista-tet', href: 'https://github.com/jjenkins2004/Mista-Tet', note: 'Tetris rebuilt from scratch in C++ — as a boss fight.' },
+      { name: 'swiftquill', href: 'https://github.com/jjenkins2004/SwiftQuill', note: 'Native Swift library: Quill Deltas to NSAttributedString.' },
     ],
   },
 ];
