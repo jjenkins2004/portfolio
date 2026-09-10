@@ -1,0 +1,58 @@
+/* Snake: rows of numbered dots on one winding line, arrowheads showing the way, the whole list visible at once.
+   The path is accent-tinted; the walked part is solid accent. */
+.sn { --turn: 2.25rem; --gap: 1.75rem; --dot: 1.4rem; --w: 2px; --dotc: calc(var(--dot) / 2 - var(--w) / 2); --path: color-mix(in srgb, var(--accent) 45%, var(--line)); --walk: var(--accent); width: 100%; display: grid; gap: var(--gap); padding: 0 var(--turn); }
+.sn button { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; }
+.sn-seg { position: relative; display: grid; gap: var(--space-4); }
+.sn-row { position: relative; display: grid; grid-template-columns: repeat(var(--per), 1fr); }
+.sn-seg.is-rtl .sn-row { direction: rtl; }
+.sn-row::before { content: ''; position: absolute; top: var(--dotc); height: var(--w); left: var(--l); right: var(--r); }
+.sn-step { direction: ltr; display: grid; justify-items: center; text-align: center; gap: 0.3rem; padding: 0 var(--space-2); }
+.sn-dot { position: relative; z-index: 1; width: var(--dot); height: var(--dot); border-radius: 50%; background: var(--bg-raised); border: 2px solid var(--path); box-sizing: border-box; display: grid; place-items: center; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600; line-height: 1; color: var(--ink-muted); }
+.sn-step.is-past .sn-dot { border-color: var(--accent); color: var(--accent); }
+.sn-step.is-active .sn-dot { background: var(--accent); border-color: var(--accent); color: var(--bg-raised); }
+.sn-when { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-muted); line-height: 1.2; }
+.sn-title { font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; color: var(--ink-muted); line-height: 1.2; }
+.sn-step.is-active .sn-title, .sn-step:hover .sn-title { color: var(--ink); }
+
+/* arrowheads on the line, one per gap between dots, pointing the row's way */
+.sn-arrow { position: absolute; z-index: 1; left: var(--x); top: calc(var(--dotc) + var(--w) / 2); width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 7px solid var(--path); transform: translate(-50%, -50%); }
+.sn-seg.is-rtl .sn-arrow { border-left: 0; border-right: 7px solid var(--path); }
+
+/* half-circle turn at the edge, with a downward arrowhead on its vertical run */
+.sn-turn { position: absolute; top: var(--dotc); height: calc(100% + var(--gap) + var(--w)); width: var(--turn); border: var(--w) solid var(--path); box-sizing: border-box; pointer-events: none; }
+.sn-seg:not(.is-rtl) .sn-turn { right: calc(-1 * var(--turn)); border-left: 0; border-radius: 0 999px 999px 0; }
+.sn-seg.is-rtl .sn-turn { left: calc(-1 * var(--turn)); border-right: 0; border-radius: 999px 0 0 999px; }
+.sn-turn::after { content: ''; position: absolute; top: 50%; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--path); transform: translateY(-50%); }
+/* offsets are from the padding box, which sits inside the border, so add half the border back */
+.sn-seg:not(.is-rtl) .sn-turn::after { right: calc(-5px - var(--w) / 2); }
+.sn-seg.is-rtl .sn-turn::after { left: calc(-5px - var(--w) / 2); }
+
+/* the walked part of the path */
+.sn-row::before { background: linear-gradient(to right, var(--walk) var(--fill), var(--path) var(--fill)); }
+.sn-seg.is-rtl .sn-row::before { background: linear-gradient(to left, var(--walk) var(--fill), var(--path) var(--fill)); }
+.sn-seg.is-done .sn-turn { border-color: var(--walk); }
+.sn-seg.is-done .sn-turn::after { border-top-color: var(--walk); }
+.sn-arrow.is-done { border-left-color: var(--walk); }
+.sn-seg.is-rtl .sn-arrow.is-done { border-right-color: var(--walk); }
+.sn-step.is-active .sn-when { color: var(--ink); font-weight: 500; }
+
+/* the selected item, in a card under its own row; the turn wraps around it */
+.sn-detail { animation: sn-open 180ms ease-out; scroll-margin: var(--space-8) 0; display: grid; gap: var(--space-3); justify-items: start; margin-top: var(--space-2); border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); padding: var(--space-4); }
+.sn-line { font-family: var(--font-body); font-size: var(--text-base); color: var(--ink-muted); line-height: 1.4; }
+.sn-nav { display: flex; justify-content: space-between; width: 100%; margin-top: var(--space-2); }
+.sn-btn { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--accent); }
+.sn-btn:disabled { color: var(--ink-muted); cursor: default; opacity: 0.6; }
+
+@media (max-width: 720px) {
+  .sn { --turn: 1.5rem; --gap: 1.25rem; }
+  .sn-when { white-space: normal; }
+}
+
+@keyframes sn-open {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sn-detail { animation: none; }
+}

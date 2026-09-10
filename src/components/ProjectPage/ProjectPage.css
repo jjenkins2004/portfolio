@@ -16,6 +16,7 @@
 .pg-h { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600; text-transform: var(--display-transform); letter-spacing: 0.02em; color: var(--accent); margin-top: var(--space-8); }
 .pg-h3 { font-family: var(--font-body); font-size: var(--text-lg); font-weight: 600; color: var(--ink); text-transform: none; letter-spacing: 0; }
 .pg-dec { display: grid; gap: var(--space-3); justify-items: start; margin-top: var(--space-3); }
+.pg-dec-head { display: flex; align-items: baseline; gap: var(--space-3); width: 100%; }
 
 /* text */
 .pg-prose { font-family: var(--font-body); font-size: var(--text-base); line-height: 1.55; max-width: 72ch; }
@@ -34,6 +35,7 @@
 .pg-chat-dot-go { color: var(--go); opacity: 1; }
 .pg-chat-text { font-family: var(--font-body); font-size: var(--text-sm); line-height: 1.45; }
 .pg-chat-tool { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-muted); }
+.pg-note { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-muted); line-height: 1.5; }
 .pg-cap { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-muted); }
 .pg-mono { font-family: var(--font-mono); font-size: var(--text-sm); }
 
@@ -41,10 +43,27 @@
 .pg-media, .pg-pre { width: 100%; }
 .pg-media { display: grid; gap: var(--space-2); }
 .pg-pre { margin: 0; font-family: var(--font-mono); font-size: var(--text-xs); line-height: 1.55; overflow-x: auto; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-4); }
+/* Diagrams only. DM Mono has no box drawing glyphs, so they fall back to Menlo at a
+   slightly wider advance and long rules drift out of column; one font for every glyph
+   keeps them aligned, and the tighter leading joins the verticals into solid rules. */
+.pg-pre-tight { line-height: 1.15; font-family: Menlo, 'DejaVu Sans Mono', Consolas, monospace; }
 .pg-shot { margin: 0; display: grid; gap: var(--space-2); }
 .pg-shot img { max-width: 42rem; display: block; border: 1px solid var(--line); border-radius: var(--radius); }
 
 /* video row: phone screen recordings in a hardware-dark bezel, same in both themes */
+/* chapter photos: one beside the prose, two in a row at equal height. --a is a photo's aspect,
+   --sum the row's aspects added up, which is what caps the row height. */
+.pg-beside { width: 100%; max-width: 76ch; display: flow-root; }
+.pg-beside > * + * { margin-top: var(--space-3); }
+.pg-beside .pg-photo { float: right; width: clamp(15rem, calc(19rem * var(--a)), 21rem); margin: 0 0 var(--space-4) var(--space-6); }
+.pg-beside .pg-prose, .pg-beside .sn-line { max-width: none; }
+.pg-photos { display: flex; gap: var(--space-8); width: 100%; max-width: min(100%, calc(24rem * var(--sum) + var(--space-8))); align-items: flex-start; }
+.pg-photos .pg-photo { flex: var(--a) 1 0; min-width: 0; }
+.pg-photo { margin: 0; display: grid; gap: var(--space-2); }
+.pg-photo img { display: block; width: 100%; border: 1px solid var(--line); border-radius: 6px; }
+.pg-photo-frame { background: #14141a; border: 1px solid var(--line); border-radius: 1.5rem; padding: 0.35rem; }
+.pg-photo-frame img { border: 0; border-radius: 1.2rem; }
+
 .pg-vids { display: flex; flex-wrap: wrap; gap: var(--space-4); width: 100%; align-items: flex-start; }
 .pg-vid { margin: 0; flex: 1 1 0; min-width: 8.5rem; max-width: 13rem; display: grid; gap: var(--space-2); justify-items: center; }
 .pg-vid-frame { width: 100%; background: #14141a; border: 1px solid var(--line); border-radius: 1.9rem; padding: 0.45rem; }
@@ -72,3 +91,19 @@
   :root:not([data-theme='light']) .pg-lab { background: color-mix(in srgb, var(--pop) 82%, var(--bg)); }
 }
 :root[data-theme='dark'] .pg-lab { background: color-mix(in srgb, var(--pop) 82%, var(--bg)); }
+
+@media (max-width: 720px) {
+  .pg-beside .pg-photo { float: none; width: min(100%, 16rem); margin: 0 0 var(--space-4) 0; }
+  .pg-photos { max-width: none; }
+}
+
+/* too narrow to keep two photos side by side and still read them */
+@media (max-width: 560px) {
+  .pg-photos { flex-wrap: wrap; }
+  .pg-photos .pg-photo { flex: 1 1 100%; max-width: 20rem; }
+}
+
+/* Labelled block: a mono label naming the idea, then its prose and any diagram that belongs to it.
+   The gap inside a block is tighter than the gap between blocks, so a label binds to what it titles. */
+.pg-blk { display: grid; gap: var(--space-2); justify-items: start; width: 100%; }
+.pg-blk-lab { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--accent); }

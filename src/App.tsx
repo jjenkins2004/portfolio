@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
+import ExperiencePage from './components/ProjectPage/ExperiencePage';
 import ProjectPage from './components/ProjectPage/ProjectPage';
 import TermSection from './components/TermSection/TermSection';
 import Window from './components/TermSection/Window';
 import { elsewhere } from './content/elsewhere';
 import { experience } from './content/experience';
-import { pages } from './content/pages';
+import { experiencePages, pages } from './content/pages';
 import { profile } from './content/profile';
 import { projects } from './content/projects';
 import { Home } from './sections/home/Home';
@@ -185,6 +186,7 @@ export default function App() {
   if (route) {
     const [, section, slug] = route;
     if (section === 'projects' && pages[slug]) return <ProjectPage p={pages[slug]} />;
+    if (section === 'experience' && Object.hasOwn(experiencePages, slug)) return <ExperiencePage p={experiencePages[slug]} />;
     return <NotFound path={section + '/' + slug} />;
   }
   if (flat) {
