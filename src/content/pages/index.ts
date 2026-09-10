@@ -4,9 +4,10 @@ import { clipirl } from './clipirl';
 import { handshake } from './handshake';
 import { knowledgehub } from './knowledgehub';
 import { recallia } from './recallia';
+import { silky } from './silky';
 import { stepper } from './stepper';
 import { ticker } from './ticker';
 
 export const pages: Record<string, ProjectPageData> = { stepper, ticker, knowledgehub, clipirl };
 
-export const experiencePages: Record<string, ExperiencePageData> = { handshake, recallia };
+export const experiencePages: Record<string, ExperiencePageData> = { handshake, recallia, silky };

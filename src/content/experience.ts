@@ -1,7 +1,7 @@
 import type { TermItem } from '../components/TermSection/TermSection';
 
 export const experience: TermItem[] = [
-  { name: 'Founder & Lead Engineer', dim: 'Silky', href: '#/experience/silky', meta: 'Jun 2026 – now', line: 'AI-native PIM for cross-border e-commerce; sole engineer from zero to a deployed enterprise client, ~900 SKUs a year.' },
+  { name: 'Founder & Lead Engineer', dim: 'Silky', href: '#/experience/silky', meta: 'Jun 2026 - now', line: 'Automating listing creation from a factory spreadsheet and apparel photos for TikTok Shop. Deployed with a real client processing 900 SKUs a year, from the first message to a working tool in four versions over three months.' },
   { name: 'AI Engineer Fellow', dim: 'Handshake', href: '#/experience/handshake', meta: 'Apr 2026 - now', line: 'Evaluation work on frontier AI models at Handshake AI: benchmark tasks, golden solutions, adversarial tests, and head-to-head model comparisons. My main project was an agent pipeline that builds terminal benchmark tasks and hardens them until the models fail, with over 30 tasks accepted.' },
   { name: 'Founder & CTO', dim: 'Recallia', href: '#/experience/recallia', meta: 'Jun 2025 - Jun 2026', line: 'AI reflection app on iOS. A Sunday Letter that connects a week of small moments. ~200 users, a year of founder lessons.' },
   { name: 'Wireless Software Engineer', dim: 'TU Crete', href: '#/experience/tu-crete', meta: 'Jun – Aug 2025', line: '802.11 analysis desktop app; throughput and density models validated on live field data.' },
