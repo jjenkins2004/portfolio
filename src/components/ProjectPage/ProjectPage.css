@@ -15,6 +15,7 @@
 /* section hierarchy: h2 breaks the page, h3 binds to its own body */
 .pg-h { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 600; text-transform: var(--display-transform); letter-spacing: 0.02em; color: var(--accent); margin-top: var(--space-8); }
 .pg-h3 { font-family: var(--font-body); font-size: var(--text-lg); font-weight: 600; color: var(--ink); text-transform: none; letter-spacing: 0; }
+.pg-h4 { margin: 0; font-family: var(--font-body); font-size: var(--text-base); font-weight: 600; color: var(--ink); }
 .pg-dec { display: grid; gap: var(--space-3); justify-items: start; margin-top: var(--space-3); }
 .pg-dec-head { display: flex; align-items: baseline; gap: var(--space-3); width: 100%; }
 
@@ -47,6 +48,8 @@
    slightly wider advance and long rules drift out of column; one font for every glyph
    keeps them aligned, and the tighter leading joins the verticals into solid rules. */
 .pg-pre-tight { line-height: 1.15; font-family: Menlo, 'DejaVu Sans Mono', Consolas, monospace; }
+/* a frame swap moves the highlighted spans; without this the browser's scroll anchoring follows them and scrolls the page */
+.pg-anim { overflow-anchor: none; }
 .pg-shot { margin: 0; display: grid; gap: var(--space-2); }
 .pg-shot img { max-width: 42rem; display: block; border: 1px solid var(--line); border-radius: var(--radius); }
 

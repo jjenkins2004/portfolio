@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState, type CSSProperties } from 'react';
+import { Fragment, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import hljs from 'highlight.js/lib/core';
 import python from 'highlight.js/lib/languages/python';
 import typescript from 'highlight.js/lib/languages/typescript';
@@ -18,12 +18,16 @@ export type Media =
   // `tight` closes the line gaps so box drawing characters join into solid rules; only diagrams need it.
   | { kind: 'pre'; pre: string; caption?: string; lang?: 'python' | 'typescript'; tight?: boolean } // code (highlighted when lang set) or ascii diagram
   | { kind: 'anim'; frames: string[]; ms?: number; caption?: string; tight?: boolean } // looping ascii animation; frames share one fixed size
+  | { kind: 'anim'; base: string; path: Cell[]; run?: number; ms?: number; caption?: string; tight?: boolean } // one diagram with a green pulse of `run` cells sliding along `path`
   | { kind: 'img'; src: string; alt: string; caption?: string }
   | { kind: 'chat'; turns: ChatTurn[]; caption?: string } // an example conversation: user bubbles right, ai dot-rows left
   | { kind: 'video'; clips: VideoClip[]; caption?: string }; // phone screen recordings in one row, muted loop, device bezel
 
 // A photo on a snake chapter. `w`/`h` are the file's own pixels: the layout sizes from that aspect.
 // `phone` frames app screenshots in a device bezel; real photos go without one.
+// A spot on a diagram: row, then column counted on the rendered text (markers stripped).
+export type Cell = [number, number];
+
 export type Photo = { src: string; alt: string; w: number; h: number; cap?: string; phone?: boolean };
 
 // A labelled block: a mono label naming the idea, then prose, then media. Media can sit in any block,
@@ -32,7 +36,8 @@ export type Photo = { src: string; alt: string; w: number; h: number; cap?: stri
 export type Block = { label?: string; body?: string; media?: Media[]; mediaFirst?: boolean };
 
 // One titled sub-section; `when` is an optional period shown right of the title, `line` a one-line summary the snake and work layouts show.
-export type SubSection = { title: string; when?: string; line?: string; body?: string; blocks?: Block[]; media?: Media[]; photos?: Photo[] };
+// A sub may hold its own `subs` on a `layout`, so one section can split into parts (a timeline, then a work tree).
+export type SubSection = { title: string; when?: string; line?: string; body?: string; blocks?: Block[]; media?: Media[]; photos?: Photo[]; subs?: SubSection[]; layout?: 'snake' | 'work' };
 
 // One h2 block: prose (body splits on `\n\n`), labelled blocks, and/or a list of sub-sections. `layout: 'snake'` puts the subs on a
 // winding path (date + title per dot) with the selected one below it; `layout: 'work'` puts them on a tree, each
@@ -76,8 +81,10 @@ function rich(text: string) {
 }
 
 // In an unhighlighted pre: {{text}} = accent span, [[text]] = green span, ((text)) = amber span.
+const MARK = /(\{\{.*?\}\}|\[\[.*?\]\]|\(\(.*?\)\))/g;
+
 function preContent(text: string) {
-  const parts = text.split(/(\{\{.*?\}\}|\[\[.*?\]\]|\(\(.*?\)\))/g);
+  const parts = text.split(MARK);
   if (parts.length === 1) return text;
   return parts.map((p, i) => {
     if (i % 2 === 0) return p;
@@ -103,13 +110,59 @@ function preContent(text: string) {
   });
 }
 
+// Wrap the character at rendered column `c` of one source row in the green marker. The row's own
+// marker delimiters are skipped when counting columns; a pulse never lands inside another marker.
+function litCell(row: string, c: number): string {
+  const parts = row.split(MARK);
+  let src = 0;
+  let col = 0;
+  for (let i = 0; i < parts.length; i++) {
+    const marker = i % 2 === 1;
+    const len = parts[i].length - (marker ? 4 : 0);
+    if (c < col + len) {
+      const at = src + (marker ? 2 : 0) + (c - col);
+      return row.slice(0, at) + '[[' + row[at] + ']]' + row.slice(at + 1);
+    }
+    src += parts[i].length;
+    col += len;
+  }
+  return row + ' '.repeat(c - col) + '[[ ]]';
+}
+
+// The frames of a pulse: `run` lit cells sliding one cell per frame along `path` (vertices joined by
+// straight legs), growing in from the start and draining off the end before the loop restarts.
+function pulseFrames(base: string, path: Cell[], run: number): string[] {
+  const cells: Cell[] = [];
+  path.forEach(([r, c], i) => {
+    if (i === 0) return cells.push([r, c]);
+    const [pr, pc] = path[i - 1];
+    const n = Math.max(Math.abs(r - pr), Math.abs(c - pc));
+    for (let k = 1; k <= n; k++) cells.push([pr + Math.sign(r - pr) * k, pc + Math.sign(c - pc) * k]);
+  });
+  const rows = base.split('\n');
+  const frames: string[] = [];
+  for (let k = 0; k < cells.length + run - 1; k++) {
+    const lit = cells.slice(Math.max(0, k - run + 1), Math.min(k + 1, cells.length));
+    const out = rows.slice();
+    // rightmost cell of a row first, so earlier insertions keep their columns
+    for (const [r, c] of [...lit].sort((x, y) => x[0] - y[0] || y[1] - x[1])) out[r] = litCell(out[r], c);
+    frames.push(out.join('\n'));
+  }
+  return frames;
+}
+
+function PulseBlock({ base, path, run = 12, ms, tight }: { base: string; path: Cell[]; run?: number; ms?: number; tight?: boolean }) {
+  const frames = useMemo(() => pulseFrames(base, path, run), [base, path, run]);
+  return <AnimBlock frames={frames} ms={ms} tight={tight} />;
+}
+
 function AnimBlock({ frames, ms = 450, tight }: { frames: string[]; ms?: number; tight?: boolean }) {
   const [i, setI] = useState(0);
   useEffect(() => {
     const t = setInterval(() => setI((v) => (v + 1) % frames.length), ms);
     return () => clearInterval(t);
   }, [frames.length, ms]);
-  return <pre className={tight ? 'pg-pre pg-pre-tight' : 'pg-pre'}>{preContent(frames[i])}</pre>;
+  return <pre className={'pg-pre pg-anim' + (tight ? ' pg-pre-tight' : '')}>{preContent(frames[i])}</pre>;
 }
 
 function VideoRow({ clips }: { clips: VideoClip[] }) {
@@ -134,7 +187,7 @@ function MediaList({ media }: { media?: Media[] }) {
       {media.map((m, i) =>
         m.kind === 'anim' ? (
           <div className="pg-media" key={i}>
-            <AnimBlock frames={m.frames} ms={m.ms} tight={m.tight} />
+            {'frames' in m ? <AnimBlock frames={m.frames} ms={m.ms} tight={m.tight} /> : <PulseBlock base={m.base} path={m.path} run={m.run} ms={m.ms} tight={m.tight} />}
             {m.caption && <p className="pg-cap">{m.caption}</p>}
           </div>
         ) : m.kind === 'pre' ? (
@@ -203,6 +256,14 @@ function Blocks({ items }: { items: Block[] }) {
   );
 }
 
+// A list of subs on the layout asked for: a snake, a work tree, or plain titled blocks. `nested` marks a
+// list inside a sub, whose snake titles step down to h4.
+function SubList({ subs, layout, mediaFirst, nested = false }: { subs: SubSection[]; layout?: 'snake' | 'work'; mediaFirst?: boolean; nested?: boolean }) {
+  if (layout === 'snake') return <Snake items={subs} renderDetail={(s) => SnakeDetail(s, nested)} />;
+  if (layout === 'work') return <WorkList items={subs} renderDetail={WorkDetail} />;
+  return <Subs items={subs} mediaFirst={mediaFirst} />;
+}
+
 // mediaFirst: features read title → code → explanation; difficulties keep prose first.
 function Subs({ items, mediaFirst = false }: { items: SubSection[]; mediaFirst?: boolean }) {
   return (
@@ -221,6 +282,7 @@ function Subs({ items, mediaFirst = false }: { items: SubSection[]; mediaFirst?:
           {s.body && <p className="pg-prose">{rich(s.body)}</p>}
           {s.blocks && <Blocks items={s.blocks} />}
           {!mediaFirst && <MediaList media={s.media} />}
+          {s.subs && <SubList subs={s.subs} layout={s.layout} nested />}
         </div>
       ))}
     </>
@@ -261,16 +323,16 @@ function WorkDetail(s: SubSection) {
   );
 }
 
-// The selected snake item: title and period, its one-liner, body paragraphs, then media.
+// The selected snake item: title and period (h4 when the snake sits inside a sub), its one-liner, body paragraphs, then media.
 // One photo sits beside the prose; two share a row under it, equal height, each as wide as its aspect
 // makes it. `--sum` is the aspects added up, which caps how tall the row can get.
-function SnakeDetail(s: SubSection) {
+function SnakeDetail(s: SubSection, nested = false) {
   const photos = s.photos ?? [];
   const beside = photos.length === 1;
   return (
     <>
       <div className="pg-dec-head">
-        <h3 className="pg-h3">{s.title}</h3>
+        {nested ? <h4 className="pg-h4">{s.title}</h4> : <h3 className="pg-h3">{s.title}</h3>}
         {s.when && <span className="pg-meta">{s.when}</span>}
       </div>
       {beside ? (
@@ -336,13 +398,7 @@ export default function PageView({ dir, slug, name, dates, line, facts, sections
             <Prose body={s.body} />
             {s.blocks && <Blocks items={s.blocks} />}
             <MediaList media={s.media} />
-            {s.subs && s.layout === 'snake' ? (
-              <Snake items={s.subs} renderDetail={SnakeDetail} />
-            ) : s.subs && s.layout === 'work' ? (
-              <WorkList items={s.subs} renderDetail={WorkDetail} />
-            ) : (
-              s.subs && <Subs items={s.subs} mediaFirst={s.mediaFirst} />
-            )}
+            {s.subs && <SubList subs={s.subs} layout={s.layout} mediaFirst={s.mediaFirst} />}
           </Fragment>
         ))}
         <p className="pg-cd">

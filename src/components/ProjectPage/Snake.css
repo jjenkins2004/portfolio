@@ -11,7 +11,7 @@
 .sn-step.is-past .sn-dot { border-color: var(--accent); color: var(--accent); }
 .sn-step.is-active .sn-dot { background: var(--accent); border-color: var(--accent); color: var(--bg-raised); }
 .sn-when { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-muted); line-height: 1.2; }
-.sn-title { font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; color: var(--ink-muted); line-height: 1.2; }
+.sn-title { max-width: 100%; text-align: center; font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; color: var(--ink-muted); line-height: 1.2; }
 .sn-step.is-active .sn-title, .sn-step:hover .sn-title { color: var(--ink); }
 
 /* arrowheads on the line, one per gap between dots, pointing the row's way */
