@@ -320,7 +320,7 @@ const queryBuild = `  ╭───────╮  ╭────────�
 export const recallia: ExperiencePageData = {
   slug: 'recallia',
   org: 'recallia',
-  role: 'Founder & CTO',
+  role: 'Technical Founder',
   dates: 'Jun 2025 - Jun 2026',
   line: 'AI reflection app on iOS. A Sunday Letter that connects a week of small moments. ~200 users, a year of founder lessons.',
   concepts: 'shipping fast · event-driven architecture · customer interviews',

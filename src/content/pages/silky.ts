@@ -3,7 +3,7 @@ import type { ExperiencePageData } from '../../components/ProjectPage/Experience
 export const silky: ExperiencePageData = {
   slug: 'silky',
   org: 'silky',
-  role: 'Founder & Lead Engineer',
+  role: 'Technical Founder',
   dates: 'Jun 2026 - now',
   line: 'Automating listing creation from a factory spreadsheet and apparel photos for TikTok Shop. Deployed with a real client processing 900 SKUs a year, from the first message to a working tool in four versions over three months.',
   concepts: 'client discovery · AI-native pipelines · marketplace APIs',
