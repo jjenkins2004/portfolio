@@ -54,8 +54,8 @@ function Node({ item, nums }: { item: TermItem; nums: Map<TermItem, string> }) {
   );
 }
 
-/** `active` comes from the deck (the slide is the current one). Without it, the run starts when the
- * window first scrolls into view. Either way it runs once. */
+/** `active` comes from the deck (the slide is fully in view, scroll settled on it). Without it, the run
+ * starts when the window first scrolls into view. Either way it runs once. */
 export default function TermSection({ dir, items, active }: { dir: string; items: TermItem[]; active?: boolean }) {
   // Line numbers count tree entries only; description lines hang unnumbered like wrapped output.
   const nums = new Map<TermItem, string>();

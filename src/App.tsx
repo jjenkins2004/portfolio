@@ -43,10 +43,15 @@ function useMedia(q: string) {
  * slides sit fixed and crossfade. Fade is a pure function of scroll position; gestures,
  * momentum and settling are the browser's native scroll + scroll-snap physics — no wheel
  * hijacking, no locks, no gesture inference.
+ *
+ * `active` flips at the midpoint of a step (nav, hash); `shown` is the slide fully in view, only
+ * while the scroll sits on its step. A window starts its run on `shown`, never mid-transition.
  */
 function useDeck(on: boolean) {
   const [active, setActive] = useState(initialSlide);
+  const [shown, setShown] = useState<string | null>(null);
   const current = useRef(active);
+  const shownRef = useRef(shown);
   useEffect(() => {
     current.current = active;
   }, [active]);
@@ -71,10 +76,16 @@ function useDeck(on: boolean) {
         el.style.opacity = String(op);
         el.style.visibility = op > 0.001 ? 'visible' : 'hidden';
       });
-      const near = SLIDES[Math.round(p)];
+      const k = Math.round(p);
+      const near = SLIDES[k];
       if (near !== current.current) {
         setActive(near);
         history.replaceState(null, '', `#${near}`);
+      }
+      const settled = Math.abs(p - k) < 0.01 ? near : null;
+      if (settled !== shownRef.current) {
+        shownRef.current = settled;
+        setShown(settled);
       }
     };
     const schedule = () => {
@@ -102,7 +113,7 @@ function useDeck(on: boolean) {
       window.removeEventListener('keydown', onKey);
     };
   }, [on]);
-  return active;
+  return { active, shown };
 }
 
 /** Narrow or short screens: plain stacked sections, native scrolling; track which section owns the viewport for the nav. */
@@ -139,7 +150,7 @@ function useFlatActive(on: boolean) {
   return active;
 }
 
-// `active` is only known on the deck; flat pages let each window start itself when it scrolls into view.
+// `active` (slide fully in view) is only known on the deck; flat pages let each window start itself when it scrolls into view.
 function Section({ id, active }: { id: string; active?: boolean }) {
   if (id === 'home') return <Home />;
   if (id === 'projects') return <TermSection dir="projects" items={projects} active={active} />;
@@ -182,7 +193,7 @@ export default function App() {
   const hash = useHash();
   const route = hash.match(/^#\/(projects|experience|elsewhere)\/([\w-]+)$/);
   const flat = useMedia('(max-width: 960px), (max-height: 720px)');
-  const deckActive = useDeck(!route && !flat);
+  const deck = useDeck(!route && !flat);
   const flatActive = useFlatActive(!route && flat);
   if (route) {
     const [, section, slug] = route;
@@ -206,12 +217,12 @@ export default function App() {
   }
   return (
     <>
-      <SiteNav active={deckActive} />
+      <SiteNav active={deck.active} />
       <main className="deck">
         <div className="stack">
           {SLIDES.map((id) => (
-            <section className={deckActive === id ? 'slide is-active' : 'slide'} id={`s-${id}`} key={id}>
-              <Section id={id} active={deckActive === id} />
+            <section className={deck.active === id ? 'slide is-active' : 'slide'} id={`s-${id}`} key={id}>
+              <Section id={id} active={deck.shown === id} />
             </section>
           ))}
         </div>
