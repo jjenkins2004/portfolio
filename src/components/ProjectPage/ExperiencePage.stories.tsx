@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { handshake } from '../../content/pages/handshake';
 import { recallia } from '../../content/pages/recallia';
 import { silky } from '../../content/pages/silky';
+import { tuCrete } from '../../content/pages/tu-crete';
 import ExperiencePage from './ExperiencePage';
 
 const meta: Meta<typeof ExperiencePage> = {
@@ -17,3 +18,5 @@ export const Handshake: StoryObj<typeof ExperiencePage> = { args: { p: handshake
 export const Recallia: StoryObj<typeof ExperiencePage> = { args: { p: recallia } };
 
 export const Silky: StoryObj<typeof ExperiencePage> = { args: { p: silky } };
+
+export const TuCrete: StoryObj<typeof ExperiencePage> = { args: { p: tuCrete } };

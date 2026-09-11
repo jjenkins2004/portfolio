@@ -7,7 +7,8 @@ import { recallia } from './recallia';
 import { silky } from './silky';
 import { stepper } from './stepper';
 import { ticker } from './ticker';
+import { tuCrete } from './tu-crete';
 
 export const pages: Record<string, ProjectPageData> = { stepper, ticker, knowledgehub, clipirl };
 
-export const experiencePages: Record<string, ExperiencePageData> = { handshake, recallia, silky };
+export const experiencePages: Record<string, ExperiencePageData> = { handshake, recallia, silky, 'tu-crete': tuCrete };
