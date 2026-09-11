@@ -7,22 +7,18 @@ export const profile = {
   workStatus: 'Open to founding / forward-deployed roles',
   location: 'Los Angeles',
   education: 'MS CS, USC ’27',
-  // Chip rows on the home terminal; each links to the page that best shows it.
+  // Chip rows on the home terminal. Concepts: the headline concept of each top experience, in rank
+  // order, one per line. Every chip links to a different page.
   concepts: [
-    { text: 'agent-run pipelines', href: '#/experience/handshake' },
-    { text: 'checkpoint & resume', href: '#/projects/stepper' },
     { text: 'event-driven architecture', href: '#/experience/recallia' },
     { text: 'client discovery', href: '#/experience/silky' },
-    { text: 'background job queues', href: '#/experience/memoir' },
-    { text: 'all-or-nothing commits', href: '#/projects/knowledgehub' },
+    { text: 'agent-run pipelines', href: '#/experience/handshake' },
+    { text: 'checkpoint & resume', href: '#/projects/stepper' },
   ],
   stack: [
-    { text: 'Python', href: '#/projects/stepper' },
+    { text: 'Python', href: '#/projects/ticker' },
     { text: 'TypeScript', href: '#/projects/knowledgehub' },
     { text: 'Swift', href: '#/projects/clipirl' },
-    { text: 'React', href: '#/experience/heat-lab' },
-    { text: 'FastAPI', href: '#/experience/silky' },
-    { text: 'MCP', href: '#/projects/ticker' },
   ],
   favoriteActivities: 'Two or three things I do for fun', // TODO
   links: [

@@ -93,12 +93,13 @@ export function Home() {
                 const ms = still ? '—' : `${p.ms[i]}ms`;
                 const level = r.kind === 'value' ? r.level : undefined;
                 const todo = r.kind === 'value' && r.todo;
+                const valueClass = todo ? 'term-value todo' : r.kind === 'tags' ? 'term-value term-tags' + (r.column ? ' column' : '') : 'term-value';
                 return (
                   <li key={r.key} className={level ? `term-${level}` : undefined}>
                     <span className="term-n">{n}</span>
                     <span className={`term-level ${level ?? 'info'}`}>{(level ?? 'info').toUpperCase()}</span>
                     <span className="term-key">{r.key}</span>
-                    <span className={todo ? 'term-value todo' : r.kind === 'tags' ? 'term-value term-tags' : 'term-value'}>
+                    <span className={valueClass}>
                       {r.kind === 'jump' ? (
                         <a href={r.href}>{JUMP}</a>
                       ) : r.kind === 'tags' ? (
