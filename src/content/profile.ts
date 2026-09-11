@@ -23,7 +23,7 @@ export const profile = {
   favoriteActivities: 'Two or three things I do for fun', // TODO
   links: [
     { label: 'GitHub', href: 'https://github.com/jjenkins2004' },
-    { label: 'LinkedIn', href: '#' }, // TODO: profile URL
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/joshua-jenkins-2943a792/' },
     { label: 'Email', href: 'mailto:jtjenkin@usc.edu' },
     { label: 'Resume', href: '/resume.pdf' }, // TODO: drop the PDF into public/
   ],
