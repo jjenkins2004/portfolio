@@ -98,8 +98,18 @@ export function Home() {
                     <span className="term-n">{n}</span>
                     <span className={`term-level ${level ?? 'info'}`}>{(level ?? 'info').toUpperCase()}</span>
                     <span className="term-key">{r.key}</span>
-                    <span className={todo ? 'term-value todo' : 'term-value'}>
-                      {r.kind === 'jump' ? <a href={r.href}>{JUMP}</a> : r.value}
+                    <span className={todo ? 'term-value todo' : r.kind === 'tags' ? 'term-value term-tags' : 'term-value'}>
+                      {r.kind === 'jump' ? (
+                        <a href={r.href}>{JUMP}</a>
+                      ) : r.kind === 'tags' ? (
+                        r.tags.map((t) => (
+                          <a className="term-tag" href={t.href} key={t.text}>
+                            {t.text}
+                          </a>
+                        ))
+                      ) : (
+                        r.value
+                      )}
                     </span>
                     <span className="term-ms">{ms}</span>
                   </li>

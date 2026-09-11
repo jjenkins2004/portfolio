@@ -32,6 +32,10 @@
 .term-value.todo { display: inline; }
 .term-value a { color: var(--accent); text-decoration: none; font-family: var(--font-mono); font-size: var(--text-sm); border-bottom: 1px solid currentColor; }
 .term-value a:hover { color: var(--accent-strong); }
+/* concept / stack chips: soft violet wash, each a link to the page that best shows it */
+.term-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.term-value .term-tag { font-size: var(--text-xs); background: var(--accent-soft); color: var(--accent); padding: 0.15em 0.55em; border-radius: var(--radius); border-bottom: 0; }
+.term-value .term-tag:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--accent-strong); }
 .term-ms { color: var(--ink-muted); font-variant-numeric: tabular-nums; }
 .term-done { margin-top: var(--space-2); }
 .term-ok { background: var(--pop); color: var(--pop-ink); padding: 0.2em 0.6em; border-radius: var(--radius); }
