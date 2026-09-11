@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+import { useCat } from './useCat';
 import './TermSection.css';
 
 export type TermItem = {
@@ -30,7 +32,7 @@ function Node({ item, nums }: { item: TermItem; nums: Map<TermItem, string> }) {
     </div>
   );
   return (
-    <div className={'tsec-item' + (item.hot ? ' hot' : '')}>
+    <div className={'tsec-item tsec-b' + (item.hot ? ' hot' : '')}>
       <span className="tsec-n">{nums.get(item)}</span>
       {item.href ? (
         <a className="tsec-link" href={item.href}>
@@ -52,7 +54,9 @@ function Node({ item, nums }: { item: TermItem; nums: Map<TermItem, string> }) {
   );
 }
 
-export default function TermSection({ dir, items }: { dir: string; items: TermItem[] }) {
+/** `active` comes from the deck (the slide is the current one). Without it, the run starts when the
+ * window first scrolls into view. Either way it runs once. */
+export default function TermSection({ dir, items, active }: { dir: string; items: TermItem[]; active?: boolean }) {
   // Line numbers count tree entries only; description lines hang unnumbered like wrapped output.
   const nums = new Map<TermItem, string>();
   let n = 1;
@@ -64,8 +68,21 @@ export default function TermSection({ dir, items }: { dir: string; items: TermIt
     }
   };
   walk(items);
+
+  const ref = useRef<HTMLElement>(null);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    if (active !== undefined || seen || !ref.current) return;
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && setSeen(true), { threshold: 0.15 });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, [active, seen]);
+  const [started, setStarted] = useState(false); // latched, so leaving and coming back never replays
+  if ((active ?? seen) && !started) setStarted(true);
+  const run = useCat(`tree ~/jjenkins/${dir}`, items.length + 1, started); // blocks: the root line, then each entry
+
   return (
-    <section className="tsec" aria-label={dir}>
+    <section className="tsec" aria-label={dir} ref={ref}>
       <div className="tsec-bar">
         <span className="tsec-lights">
           <i />
@@ -77,17 +94,28 @@ export default function TermSection({ dir, items }: { dir: string; items: TermIt
       </div>
       <div className="tsec-body">
         <p className="tsec-cmd">
-          <span className="tsec-prompt">$ </span>tree ~/jjenkins/{dir}
+          <span className="tsec-prompt">$ </span>
+          {run.cmd}
+          {run.typing && <span className="tsec-cursor" />}
         </p>
-        <p className="tsec-dir tsec-root">
-          <span className="tsec-n">01</span>
-          {dir}/
-        </p>
-        <div className="tsec-tree">
-          {items.map((i) => (
-            <Node key={i.name} item={i} nums={nums} />
-          ))}
-        </div>
+        {run.n > 0 && (
+          <p className="tsec-dir tsec-root tsec-b">
+            <span className="tsec-n">01</span>
+            {dir}/
+          </p>
+        )}
+        {run.n > 1 && (
+          <div className="tsec-tree">
+            {items.slice(0, run.n - 1).map((i) => (
+              <Node key={i.name} item={i} nums={nums} />
+            ))}
+          </div>
+        )}
+        {run.printing && (
+          <p className="tsec-cmd">
+            <span className="tsec-cursor" />
+          </p>
+        )}
       </div>
     </section>
   );

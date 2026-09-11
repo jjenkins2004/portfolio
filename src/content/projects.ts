@@ -5,7 +5,6 @@ export const projects: TermItem[] = [
     name: 'stepper',
     href: '#/projects/stepper',
     meta: 'Python · AsyncIO · Jul 2026 – now',
-    hot: true,
     line: 'Checkpointed, step-based execution for long-running Python pipelines. The execution framework behind a lot of my other projects.',
   },
   {

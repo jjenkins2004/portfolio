@@ -139,11 +139,12 @@ function useFlatActive(on: boolean) {
   return active;
 }
 
-function Section({ id }: { id: string }) {
+// `active` is only known on the deck; flat pages let each window start itself when it scrolls into view.
+function Section({ id, active }: { id: string; active?: boolean }) {
   if (id === 'home') return <Home />;
-  if (id === 'projects') return <TermSection dir="projects" items={projects} />;
-  if (id === 'experience') return <TermSection dir="experience" items={experience} />;
-  return <TermSection dir="elsewhere" items={elsewhere} />;
+  if (id === 'projects') return <TermSection dir="projects" items={projects} active={active} />;
+  if (id === 'experience') return <TermSection dir="experience" items={experience} active={active} />;
+  return <TermSection dir="elsewhere" items={elsewhere} active={active} />;
 }
 
 function SiteNav({ active }: { active: string }) {
@@ -210,7 +211,7 @@ export default function App() {
         <div className="stack">
           {SLIDES.map((id) => (
             <section className={deckActive === id ? 'slide is-active' : 'slide'} id={`s-${id}`} key={id}>
-              <Section id={id} />
+              <Section id={id} active={deckActive === id} />
             </section>
           ))}
         </div>

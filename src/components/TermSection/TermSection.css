@@ -9,6 +9,12 @@
 .tsec-body { padding: var(--space-5, 1.25rem); display: grid; gap: var(--space-4); align-content: start; }
 .tsec-body > * { min-width: 0; } /* the widest row never widens the window; rows wrap instead */
 .tsec-cmd, .tsec-dir { color: var(--ink-muted); overflow-wrap: anywhere; }
+.tsec-cursor { display: inline-block; width: 0.55em; height: 1.05em; background: var(--pop); vertical-align: text-bottom; margin-left: 0.1em; animation: tsec-blink 1s steps(1) infinite; }
+@keyframes tsec-blink { 50% { opacity: 0; } }
+/* blocks print top-down after the command types, same run as Home */
+.tsec-b { animation: tsec-in 360ms ease-out both; }
+@keyframes tsec-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tsec-cursor, .tsec-b { animation: none; } }
 .tsec-prompt { color: var(--accent); }
 
 /* CSS-drawn tree rails */

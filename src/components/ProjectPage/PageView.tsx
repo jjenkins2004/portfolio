@@ -3,50 +3,13 @@ import hljs from 'highlight.js/lib/core';
 import python from 'highlight.js/lib/languages/python';
 import typescript from 'highlight.js/lib/languages/typescript';
 import Window from '../TermSection/Window';
+import { useCat } from '../TermSection/useCat';
 import Snake from './Snake';
 import WorkList from './WorkList';
 import './ProjectPage.css';
 
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('typescript', typescript);
-
-const CMD_CHAR_MS = 20; // the command is ~6x longer than Home's `run info`, so it types faster
-const BLOCK_MS: [number, number] = [120, 260]; // wait before each block prints
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const between = (lo: number, hi: number) => lo + Math.random() * (hi - lo);
-
-function prefersReducedMotion() {
-  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
-type Run = { cmd: string; n: number }; // command typed so far; blocks printed so far
-
-// Same run as Home: type the command, then print the blocks top-down with a random wait before each.
-function useCat(cmd: string, count: number, still: boolean): Run {
-  const [r, setR] = useState<Run>(() => (still ? { cmd, n: count } : { cmd: '', n: 0 }));
-  useEffect(() => {
-    if (still) return;
-    let alive = true;
-    (async () => {
-      await sleep(250);
-      for (let i = 1; i <= cmd.length; i++) {
-        if (!alive) return;
-        setR((s) => ({ ...s, cmd: cmd.slice(0, i) }));
-        await sleep(CMD_CHAR_MS);
-      }
-      for (let i = 1; i <= count; i++) {
-        await sleep(between(BLOCK_MS[0], BLOCK_MS[1]));
-        if (!alive) return;
-        setR((s) => ({ ...s, n: i }));
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [cmd, count, still]);
-  return r;
-}
 
 export type ChatTurn = { role: 'user' | 'ai'; text: string; tools?: string[] };
 
@@ -455,24 +418,21 @@ export default function PageView({ dir, slug, name, dates, line, facts, sections
       <span className="pg-cursor" />
     </p>,
   ];
-  const [still] = useState(prefersReducedMotion);
-  const run = useCat(cmd, blocks.length, still);
-  const typing = run.cmd.length < cmd.length;
-  const printing = !typing && run.n < blocks.length;
+  const run = useCat(cmd, blocks.length);
   return (
     <div className="pg-page">
       <Window title={'jjenkins/' + dir + '/' + slug + ' — zsh'}>
         <p className="pg-cmd">
           <span className="pg-prompt">$ </span>
           {run.cmd}
-          {typing && <span className="pg-cursor" />}
+          {run.typing && <span className="pg-cursor" />}
         </p>
         {blocks.slice(0, run.n).map((b) => (
           <div className="pg-b" key={b.key}>
             {b}
           </div>
         ))}
-        {printing && (
+        {run.printing && (
           <p className="pg-cmd">
             <span className="pg-cursor" />
           </p>
