@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties, type ReactElement } from 'react';
 import hljs from 'highlight.js/lib/core';
 import python from 'highlight.js/lib/languages/python';
 import typescript from 'highlight.js/lib/languages/typescript';
@@ -9,6 +9,44 @@ import './ProjectPage.css';
 
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('typescript', typescript);
+
+const CMD_CHAR_MS = 20; // the command is ~6x longer than Home's `run info`, so it types faster
+const BLOCK_MS: [number, number] = [120, 260]; // wait before each block prints
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const between = (lo: number, hi: number) => lo + Math.random() * (hi - lo);
+
+function prefersReducedMotion() {
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+type Run = { cmd: string; n: number }; // command typed so far; blocks printed so far
+
+// Same run as Home: type the command, then print the blocks top-down with a random wait before each.
+function useCat(cmd: string, count: number, still: boolean): Run {
+  const [r, setR] = useState<Run>(() => (still ? { cmd, n: count } : { cmd: '', n: 0 }));
+  useEffect(() => {
+    if (still) return;
+    let alive = true;
+    (async () => {
+      await sleep(250);
+      for (let i = 1; i <= cmd.length; i++) {
+        if (!alive) return;
+        setR((s) => ({ ...s, cmd: cmd.slice(0, i) }));
+        await sleep(CMD_CHAR_MS);
+      }
+      for (let i = 1; i <= count; i++) {
+        await sleep(between(BLOCK_MS[0], BLOCK_MS[1]));
+        if (!alive) return;
+        setR((s) => ({ ...s, n: i }));
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [cmd, count, still]);
+  return r;
+}
 
 export type ChatTurn = { role: 'user' | 'ai'; text: string; tools?: string[] };
 
@@ -364,47 +402,81 @@ function SnakeDetail(s: SubSection, nested = false) {
   );
 }
 
-/** One terminal window running `cat README.md`: header, fact rows, then h2 sections. ProjectPage and ExperiencePage adapt their data to this. */
+// One section as the blocks the run prints: h2, note, each paragraph, each labelled block, each media,
+// then the subs — one block per sub, or the whole snake / work tree as one.
+function sectionBlocks(s: PageSection): ReactElement[] {
+  const k = s.title;
+  const subs = !s.subs
+    ? []
+    : s.layout
+      ? [<SubList subs={s.subs} layout={s.layout} mediaFirst={s.mediaFirst} key={k + '/subs'} />]
+      : s.subs.map((sub) => <Subs items={[sub]} mediaFirst={s.mediaFirst} key={k + '/' + sub.title} />);
+  return [
+    <h2 className="pg-h" key={k}>
+      {s.title}
+    </h2>,
+    ...(s.note ? [<p className="pg-note" key={k + '/note'}>{rich(s.note)}</p>] : []),
+    ...(s.body?.split('\n\n') ?? []).map((para, i) => <Prose body={para} key={`${k}/p${i}`} />),
+    ...(s.blocks ?? []).map((b, i) => <Blocks items={[b]} key={`${k}/b${i}`} />),
+    ...(s.media ?? []).map((m, i) => <MediaList media={[m]} key={`${k}/m${i}`} />),
+    ...subs,
+  ];
+}
+
+/** One terminal window running `cat README.md`: header, fact rows, then h2 sections. ProjectPage and ExperiencePage adapt their data to this.
+ *  Runs like Home: the command types, then each block prints top-down with a fade; skipped under prefers-reduced-motion. */
 export default function PageView({ dir, slug, name, dates, line, facts, sections }: PageViewProps) {
+  const cmd = `cd ~/jjenkins/${dir}/${slug} && cat README.md`;
+  const blocks: ReactElement[] = [
+    <div className="pg-head" key="head">
+      <span className="pg-name">{name}</span>
+      <span className="pg-meta">{dates}</span>
+    </div>,
+    <p className="pg-lede" key="lede">
+      {rich(line)}
+    </p>,
+    <div className="pg-facts" key="facts">
+      {facts.map((f) => (
+        <p className="pg-mono" key={f.label}>
+          <span className="pg-lab">{f.label}</span>
+          {f.href ? (
+            <a className="pg-remote" href={f.href}>
+              {f.text}
+            </a>
+          ) : (
+            f.text
+          )}
+        </p>
+      ))}
+    </div>,
+    ...sections.flatMap(sectionBlocks),
+    <p className="pg-cd" key="cd">
+      <a href={'#' + dir}>$ cd ..</a>
+      <span className="pg-cursor" />
+    </p>,
+  ];
+  const [still] = useState(prefersReducedMotion);
+  const run = useCat(cmd, blocks.length, still);
+  const typing = run.cmd.length < cmd.length;
+  const printing = !typing && run.n < blocks.length;
   return (
     <div className="pg-page">
       <Window title={'jjenkins/' + dir + '/' + slug + ' — zsh'}>
         <p className="pg-cmd">
-          <span className="pg-prompt">$ </span>cd ~/jjenkins/{dir}/{slug} && cat README.md
+          <span className="pg-prompt">$ </span>
+          {run.cmd}
+          {typing && <span className="pg-cursor" />}
         </p>
-        <div className="pg-head">
-          <span className="pg-name">{name}</span>
-          <span className="pg-meta">{dates}</span>
-        </div>
-        <p className="pg-lede">{rich(line)}</p>
-        <div className="pg-facts">
-          {facts.map((f) => (
-            <p className="pg-mono" key={f.label}>
-              <span className="pg-lab">{f.label}</span>
-              {f.href ? (
-                <a className="pg-remote" href={f.href}>
-                  {f.text}
-                </a>
-              ) : (
-                f.text
-              )}
-            </p>
-          ))}
-        </div>
-        {sections.map((s) => (
-          <Fragment key={s.title}>
-            <h2 className="pg-h">{s.title}</h2>
-            {s.note && <p className="pg-note">{rich(s.note)}</p>}
-            <Prose body={s.body} />
-            {s.blocks && <Blocks items={s.blocks} />}
-            <MediaList media={s.media} />
-            {s.subs && <SubList subs={s.subs} layout={s.layout} mediaFirst={s.mediaFirst} />}
-          </Fragment>
+        {blocks.slice(0, run.n).map((b) => (
+          <div className="pg-b" key={b.key}>
+            {b}
+          </div>
         ))}
-        <p className="pg-cd">
-          <a href={'#' + dir}>$ cd ..</a>
-          <span className="pg-cursor" />
-        </p>
+        {printing && (
+          <p className="pg-cmd">
+            <span className="pg-cursor" />
+          </p>
+        )}
       </Window>
     </div>
   );

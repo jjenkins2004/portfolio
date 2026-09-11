@@ -185,8 +185,8 @@ export default function App() {
   const flatActive = useFlatActive(!route && flat);
   if (route) {
     const [, section, slug] = route;
-    if (section === 'projects' && pages[slug]) return <ProjectPage p={pages[slug]} />;
-    if (section === 'experience' && Object.hasOwn(experiencePages, slug)) return <ExperiencePage p={experiencePages[slug]} />;
+    if (section === 'projects' && pages[slug]) return <ProjectPage key={slug} p={pages[slug]} />; // key: a fresh run per page
+    if (section === 'experience' && Object.hasOwn(experiencePages, slug)) return <ExperiencePage key={slug} p={experiencePages[slug]} />;
     return <NotFound path={section + '/' + slug} />;
   }
   if (flat) {

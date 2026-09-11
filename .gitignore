@@ -28,3 +28,6 @@ storybook-static
 
 # personal notes, not site source
 Recallia Dump.docx
+
+# local recallia moment dump, never committed
+.recallia-data/
