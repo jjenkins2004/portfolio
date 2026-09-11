@@ -3,11 +3,11 @@ export const profile = {
   first: 'Joshua',
   last: 'Jenkins',
   name: 'Joshua Jenkins',
-  identity: 'Two-time technical founder. I build tools for AI agents, and iOS apps.',
+  identity: 'Engineer who builds early-stage startups end to end.',
   workStatus: 'Open to founding / forward-deployed roles',
   location: 'Los Angeles',
   education: 'MS CS, USC ’27',
-  whatIDo: 'Backend and agent tooling in Python and TypeScript: pipelines that checkpoint and resume, tool servers that give agents live data and a shared knowledge base.\niOS apps in Swift when the product has to be on a phone. Two startups shipped to real users, where I built the whole technical side.',
+  whatIDo: 'Backend and agent tooling for early-stage startups, from first prototype to real users.',
   favoriteActivities: 'Two or three things I do for fun', // TODO
   links: [
     { label: 'GitHub', href: 'https://github.com/jjenkins2004' },
