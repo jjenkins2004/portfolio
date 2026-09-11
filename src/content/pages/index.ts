@@ -3,6 +3,7 @@ import type { ProjectPageData } from '../../components/ProjectPage/ProjectPage';
 import { clipirl } from './clipirl';
 import { handshake } from './handshake';
 import { knowledgehub } from './knowledgehub';
+import { memoir } from './memoir';
 import { recallia } from './recallia';
 import { silky } from './silky';
 import { stepper } from './stepper';
@@ -11,4 +12,4 @@ import { tuCrete } from './tu-crete';
 
 export const pages: Record<string, ProjectPageData> = { stepper, ticker, knowledgehub, clipirl };
 
-export const experiencePages: Record<string, ExperiencePageData> = { handshake, recallia, silky, 'tu-crete': tuCrete };
+export const experiencePages: Record<string, ExperiencePageData> = { handshake, recallia, silky, 'tu-crete': tuCrete, memoir };
