@@ -2,6 +2,7 @@ import type { ExperiencePageData } from '../../components/ProjectPage/Experience
 import type { ProjectPageData } from '../../components/ProjectPage/ProjectPage';
 import { clipirl } from './clipirl';
 import { handshake } from './handshake';
+import { heatLab } from './heat-lab';
 import { knowledgehub } from './knowledgehub';
 import { recallia } from './recallia';
 import { silky } from './silky';
@@ -11,4 +12,4 @@ import { tuCrete } from './tu-crete';
 
 export const pages: Record<string, ProjectPageData> = { stepper, ticker, knowledgehub, clipirl };
 
-export const experiencePages: Record<string, ExperiencePageData> = { handshake, recallia, silky, 'tu-crete': tuCrete };
+export const experiencePages: Record<string, ExperiencePageData> = { handshake, recallia, silky, 'tu-crete': tuCrete, 'heat-lab': heatLab };
