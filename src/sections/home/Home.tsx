@@ -68,7 +68,7 @@ export function Home() {
       <main className="home-main">
         <div className="home-left">
           <h1 className="home-name">{profile.first}<br />{profile.last}</h1>
-          <p className="home-identity todo">{profile.identity}</p>
+          <p className="home-identity">{profile.identity}</p>
           <ul className="home-links">
             {profile.links.map((l) => (
               <li key={l.label}><a href={l.href}>{l.label}</a></li>
