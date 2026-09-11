@@ -16,8 +16,11 @@ function useNarrow() {
 
 export type SnakeItem = { title: string; when?: string; line?: string };
 
+const SCROLL_MARGIN = 32; // px above a tall chapter when it opens at the top
+
 /** Brings the newly opened chapter into view, centered when it fits, so picking a dot never leaves
- * the reader scrolling to find what they opened. Stays put on first paint. */
+ * the reader scrolling to find what they opened. Scrolls the window only, never a clipping ancestor
+ * sideways (scrollIntoView would, and shift the whole page). Stays put on first paint. */
 function useScrollToDetail(sel: number) {
   const detail = useRef<HTMLDivElement>(null);
   const opened = useRef(false);
@@ -29,8 +32,10 @@ function useScrollToDetail(sel: number) {
     }
     if (!el) return;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const fits = el.getBoundingClientRect().height < window.innerHeight * 0.9;
-    el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: fits ? 'center' : 'start' });
+    const r = el.getBoundingClientRect();
+    const fits = r.height < window.innerHeight * 0.9;
+    const top = fits ? r.top + r.height / 2 - window.innerHeight / 2 : r.top - SCROLL_MARGIN;
+    window.scrollBy({ top, behavior: reduced ? 'auto' : 'smooth' });
   }, [sel]);
   return detail;
 }
@@ -39,7 +44,7 @@ function useScrollToDetail(sel: number) {
  * A list on one path: rows of `perRow` numbered dots joined by a line, every row turning back the
  * other way through a half-circle at the edge, arrowheads on the line showing the way, so the whole
  * list is on screen at once. Each dot shows its date and title; the selected item's detail opens
- * under its own row, in a card, with prev/next. The path is tinted accent; the part already walked
+ * under its own row, in a card, with prev/next; tapping the open dot closes it. The path is tinted accent; the part already walked
  * (line, arrowheads, turns, dot rings) is solid accent.
  */
 export default function Snake<T extends SnakeItem>({
@@ -109,7 +114,7 @@ export default function Snake<T extends SnakeItem>({
                     className={'sn-step' + (i === sel ? ' is-active' : '') + (i < sel ? ' is-past' : '')}
                     type="button"
                     aria-pressed={i === sel}
-                    onClick={() => setSel(i)}
+                    onClick={() => setSel(i === sel ? -1 : i)} // tap the open one again to close it
                     key={item.title}
                   >
                     <span className="sn-dot" aria-hidden>

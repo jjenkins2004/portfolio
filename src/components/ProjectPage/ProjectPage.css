@@ -1,15 +1,16 @@
-.pg-page { min-height: 100vh; padding: var(--space-12) var(--space-8) var(--space-24); display: grid; justify-items: center; align-content: start; gap: var(--space-8); }
-.pg-page .tsec { max-width: 56rem; }
-.pg-cmd { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink-muted); }
+.pg-page { min-height: 100vh; padding: var(--space-12) var(--space-8) var(--space-24); display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: start; gap: var(--space-8); }
+.pg-page .tsec { max-width: 56rem; min-width: 0; } /* the window never outgrows the viewport, whatever a line inside wants */
+.pg-cmd { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink-muted); overflow-wrap: anywhere; }
 .pg-prompt { color: var(--accent); }
 
 /* header */
-.pg-head { display: flex; align-items: baseline; gap: var(--space-3); width: 100%; margin-top: var(--space-2); }
+.pg-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); width: 100%; margin-top: var(--space-2); }
 .pg-name { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 600; text-transform: var(--display-transform); letter-spacing: var(--display-tracking); line-height: 1; color: var(--accent); }
 .pg-meta { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-muted); white-space: nowrap; }
 .pg-lede { font-family: var(--font-body); font-size: var(--text-base); max-width: 72ch; }
 .pg-facts { display: grid; gap: var(--space-3); margin: var(--space-2) 0 var(--space-4); }
-.pg-facts .pg-mono { display: grid; grid-template-columns: 5.5rem 1fr; align-items: baseline; gap: var(--space-3); }
+.pg-facts .pg-mono { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); align-items: baseline; gap: var(--space-3); }
+.pg-remote { overflow-wrap: anywhere; }
 .pg-lab { justify-self: start; text-align: center; font-size: var(--text-xs); background: var(--pop); color: var(--pop-ink); border-radius: var(--radius); padding: 0.15em 0.5em; }
 
 /* section hierarchy: h2 breaks the page, h3 binds to its own body */
@@ -17,7 +18,7 @@
 .pg-h3 { font-family: var(--font-body); font-size: var(--text-lg); font-weight: 600; color: var(--ink); text-transform: none; letter-spacing: 0; }
 .pg-h4 { margin: 0; font-family: var(--font-body); font-size: var(--text-base); font-weight: 600; color: var(--ink); }
 .pg-dec { display: grid; gap: var(--space-3); justify-items: start; margin-top: var(--space-3); }
-.pg-dec-head { display: flex; align-items: baseline; gap: var(--space-3); width: 100%; }
+.pg-dec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); width: 100%; }
 
 /* text */
 .pg-prose { font-family: var(--font-body); font-size: var(--text-base); line-height: 1.55; max-width: 72ch; }
@@ -50,8 +51,8 @@
 .pg-pre-tight { line-height: 1.15; font-family: Menlo, 'DejaVu Sans Mono', Consolas, monospace; }
 /* a frame swap moves the highlighted spans; without this the browser's scroll anchoring follows them and scrolls the page */
 .pg-anim { overflow-anchor: none; }
-.pg-shot { margin: 0; display: grid; gap: var(--space-2); }
-.pg-shot img { max-width: 42rem; display: block; border: 1px solid var(--line); border-radius: var(--radius); }
+.pg-shot { margin: 0; max-width: 100%; display: grid; gap: var(--space-2); }
+.pg-shot img { max-width: min(42rem, 100%); display: block; border: 1px solid var(--line); border-radius: var(--radius); }
 
 /* video row: phone screen recordings in a hardware-dark bezel, same in both themes */
 /* chapter photos: one beside the prose, two in a row at equal height. --a is a photo's aspect,
@@ -100,12 +101,15 @@
 :root[data-theme='dark'] .pg-lab { background: color-mix(in srgb, var(--pop) 82%, var(--bg)); }
 
 @media (max-width: 720px) {
+  .pg-page { padding: var(--space-6) var(--space-3) var(--space-12); }
+  .pg-head .pg-meta { margin-left: 0; flex-basis: 100%; } /* dates drop under the name */
   .pg-beside .pg-photo { float: none; width: min(100%, 16rem); margin: 0 0 var(--space-4) 0; }
   .pg-photos { max-width: none; }
 }
 
 /* too narrow to keep two photos side by side and still read them */
 @media (max-width: 560px) {
+  .pg-pre { font-size: 0.75rem; } /* more columns before the panel has to scroll sideways */
   .pg-photos { flex-wrap: wrap; }
   .pg-photos .pg-photo { flex: 1 1 100%; max-width: 20rem; }
 }

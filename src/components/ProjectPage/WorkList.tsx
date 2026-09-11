@@ -3,6 +3,8 @@ import './WorkList.css';
 
 export type WorkItem = { title: string; line?: string };
 
+const SCROLL_MARGIN = 16; // px above an opened row's header
+
 /**
  * A list of work items on the same tree the home page draws: a rail with a tick out to each row,
  * numbered in a left gutter. Closed, a row shows its title and a short overview. Open, the overview
@@ -32,10 +34,14 @@ export default function WorkList<T extends WorkItem>({
     if (!row) return;
     // Opening puts the header at the top so the detail reads downward from there. Closing recentres
     // the same row, since collapsing pulls a screen or more of height out from under the reader.
+    // Window only: scrollIntoView would also drag a clipping ancestor sideways and shift the page.
     const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const block = isOpen ? 'center' : 'start';
     requestAnimationFrame(() =>
-      requestAnimationFrame(() => row.scrollIntoView({ block, behavior: smooth ? 'smooth' : 'auto' })),
+      requestAnimationFrame(() => {
+        const r = row.getBoundingClientRect();
+        const top = isOpen ? r.top + r.height / 2 - window.innerHeight / 2 : r.top - SCROLL_MARGIN;
+        window.scrollBy({ top, behavior: smooth ? 'smooth' : 'auto' });
+      }),
     );
   }
 

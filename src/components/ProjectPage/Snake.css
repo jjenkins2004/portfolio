@@ -3,7 +3,8 @@
 .sn { --turn: 2.25rem; --gap: 1.75rem; --dot: 1.4rem; --w: 2px; --dotc: calc(var(--dot) / 2 - var(--w) / 2); --path: color-mix(in srgb, var(--accent) 45%, var(--line)); --walk: var(--accent); width: 100%; display: grid; gap: var(--gap); padding: 0 var(--turn); }
 .sn button { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; }
 .sn-seg { position: relative; display: grid; gap: var(--space-4); }
-.sn-row { position: relative; display: grid; grid-template-columns: repeat(var(--per), 1fr); }
+.sn-row { position: relative; display: grid; grid-template-columns: repeat(var(--per), minmax(0, 1fr)); } /* a long title never widens the row past the window */
+.sn > * { min-width: 0; }
 .sn-seg.is-rtl .sn-row { direction: rtl; }
 .sn-row::before { content: ''; position: absolute; top: var(--dotc); height: var(--w); left: var(--l); right: var(--r); }
 .sn-step { direction: ltr; display: grid; justify-items: center; text-align: center; gap: 0.3rem; padding: 0 var(--space-2); }
@@ -11,7 +12,7 @@
 .sn-step.is-past .sn-dot { border-color: var(--accent); color: var(--accent); }
 .sn-step.is-active .sn-dot { background: var(--accent); border-color: var(--accent); color: var(--bg-raised); }
 .sn-when { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--ink-muted); line-height: 1.2; }
-.sn-title { max-width: 100%; text-align: center; font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; color: var(--ink-muted); line-height: 1.2; }
+.sn-title { max-width: 100%; overflow-wrap: anywhere; text-align: center; font-family: var(--font-body); font-size: var(--text-sm); font-weight: 600; color: var(--ink-muted); line-height: 1.2; }
 .sn-step.is-active .sn-title, .sn-step:hover .sn-title { color: var(--ink); }
 
 /* arrowheads on the line, one per gap between dots, pointing the row's way */
@@ -37,7 +38,7 @@
 .sn-step.is-active .sn-when { color: var(--ink); font-weight: 500; }
 
 /* the selected item, in a card under its own row; the turn wraps around it */
-.sn-detail { animation: sn-open 180ms ease-out; scroll-margin: var(--space-8) 0; display: grid; gap: var(--space-3); justify-items: start; margin-top: var(--space-2); border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); padding: var(--space-4); }
+.sn-detail { animation: sn-open 180ms ease-out; display: grid; gap: var(--space-3); justify-items: start; margin-top: var(--space-2); border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); padding: var(--space-4); }
 .sn-line { font-family: var(--font-body); font-size: var(--text-base); color: var(--ink-muted); line-height: 1.4; }
 .sn-nav { display: flex; justify-content: space-between; width: 100%; margin-top: var(--space-2); }
 .sn-btn { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--accent); }

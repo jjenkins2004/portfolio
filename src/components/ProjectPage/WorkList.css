@@ -1,7 +1,7 @@
 /* Work list: the home page's tree rails plus its line-number gutter, wrapped around an accordion.
    Only the header is styled as a control; the rest of a row closes on click without saying so. */
-.wk { display: grid; width: 100%; margin-left: 1.9rem; font-family: var(--font-mono); font-size: var(--text-sm); }
-.wk-row { position: relative; display: grid; gap: var(--space-3); justify-items: start; padding-left: 1.5rem; padding-bottom: var(--space-6); scroll-margin-top: var(--space-4); }
+.wk { display: grid; width: calc(100% - 1.9rem); margin-left: 1.9rem; font-family: var(--font-mono); font-size: var(--text-sm); }
+.wk-row { position: relative; display: grid; gap: var(--space-3); justify-items: start; padding-left: 1.5rem; padding-bottom: var(--space-6); }
 .wk-row:last-child { padding-bottom: 0; }
 .wk-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
@@ -27,6 +27,6 @@
 .wk-open { display: grid; gap: var(--space-3); justify-items: start; width: 100%; padding-left: calc(0.9rem + var(--space-2)); }
 
 @media (max-width: 720px) {
-  .wk { margin-left: 1.6rem; }
+  .wk { margin-left: 1.6rem; width: calc(100% - 1.6rem); }
   .wk-n { left: -1.6rem; }
 }
