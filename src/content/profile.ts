@@ -25,7 +25,7 @@ export const profile = {
     { label: 'GitHub', href: 'https://github.com/jjenkins2004' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/joshua-jenkins-2943a792/' },
     { label: 'Email', href: 'mailto:jtjenkin@usc.edu' },
-    { label: 'Resume', href: '/resume.pdf' }, // TODO: drop the PDF into public/
+    { label: 'Resume', href: '/resume.pdf' },
   ],
   sections: [
     { id: 'projects', label: 'Projects' },
