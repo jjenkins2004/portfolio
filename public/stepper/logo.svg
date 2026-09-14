@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 2: flat oval stones, winding path, top-down view with a rim -->
+  <ellipse cx="29" cy="49" rx="17" ry="10" fill="#6f757f" />
+  <ellipse cx="29" cy="48" rx="15.5" ry="8.5" fill="#8c929c" />
+  <ellipse cx="38" cy="30" rx="12" ry="7" fill="#7d838d" />
+  <ellipse cx="38" cy="29.3" rx="10.8" ry="5.8" fill="#9ca2ab" />
+  <ellipse cx="29" cy="14" rx="8" ry="4.8" fill="#8b919b" />
+  <ellipse cx="29" cy="13.5" rx="7" ry="3.9" fill="#adb3bc" />
+</svg>
