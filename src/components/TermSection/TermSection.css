@@ -5,6 +5,9 @@
 .tsec-lights i:nth-child(1) { background: #ff5f57; }
 .tsec-lights i:nth-child(2) { background: #febc2e; }
 .tsec-lights i:nth-child(3) { background: #28c840; }
+.tsec-close { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; color: rgba(0, 0, 0, 0.75); display: grid; place-items: center; font-size: 11px; font-weight: 700; line-height: 1; text-decoration: none; }
+.tsec-close::before { content: '×'; opacity: 0; }
+.tsec-lights:hover .tsec-close::before, .tsec-close:focus-visible::before { opacity: 1; } /* the × shows while the pointer is over the lights, as on a mac */
 .tsec-title { color: var(--ink-muted); text-align: center; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tsec-body { padding: var(--space-5, 1.25rem); display: grid; gap: var(--space-4); align-content: start; }
 .tsec-body > * { min-width: 0; } /* the widest row never widens the window; rows wrap instead */

@@ -10,15 +10,15 @@ export const profile = {
   // Chip rows on the home terminal. Concepts: the headline concept of each top experience, in rank
   // order, one per line. Every chip links to a different page.
   concepts: [
-    { text: 'agent-run pipelines', href: '#/experience/handshake' },
-    { text: 'client discovery', href: '#/experience/silky' },
-    { text: 'event-driven architecture', href: '#/experience/recallia' },
-    { text: 'checkpoint & resume', href: '#/projects/stepper' },
+    { text: 'agent-run pipelines', href: '/experience/handshake' },
+    { text: 'client discovery', href: '/experience/silky' },
+    { text: 'event-driven architecture', href: '/experience/recallia' },
+    { text: 'checkpoint & resume', href: '/projects/stepper' },
   ],
   stack: [
-    { text: 'Python', href: '#/projects/ticker' },
-    { text: 'TypeScript', href: '#/projects/knowledgehub' },
-    { text: 'Swift', href: '#/projects/clipirl' },
+    { text: 'Python', href: '/projects/ticker' },
+    { text: 'TypeScript', href: '/projects/knowledgehub' },
+    { text: 'Swift', href: '/projects/clipirl' },
   ],
   favoriteActivities: 'skiing, tennis, running, building',
   links: [

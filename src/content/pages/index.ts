@@ -1,6 +1,8 @@
+import type { ElsewherePageData } from '../../components/ProjectPage/ElsewherePage';
 import type { ExperiencePageData } from '../../components/ProjectPage/ExperiencePage';
 import type { ProjectPageData } from '../../components/ProjectPage/ProjectPage';
 import { clipirl } from './clipirl';
+import { gsscKorea } from './gssc-korea';
 import { handshake } from './handshake';
 import { heatLab } from './heat-lab';
 import { knowledgehub } from './knowledgehub';
@@ -14,3 +16,5 @@ import { tuCrete } from './tu-crete';
 export const pages: Record<string, ProjectPageData> = { stepper, ticker, knowledgehub, clipirl };
 
 export const experiencePages: Record<string, ExperiencePageData> = { handshake, recallia, silky, 'tu-crete': tuCrete, memoir, 'heat-lab': heatLab };
+
+export const elsewherePages: Record<string, ElsewherePageData> = { 'gssc-korea': gsscKorea };

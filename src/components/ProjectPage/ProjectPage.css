@@ -52,7 +52,7 @@
 /* a frame swap moves the highlighted spans; without this the browser's scroll anchoring follows them and scrolls the page */
 .pg-anim { overflow-anchor: none; }
 .pg-shot { margin: 0; max-width: 100%; display: grid; gap: var(--space-2); }
-.pg-shot img { max-width: min(42rem, 100%); display: block; border: 1px solid var(--line); border-radius: var(--radius); }
+.pg-shot img { max-width: min(42rem, 100%); max-height: 30rem; width: auto; object-fit: contain; display: block; border: 1px solid var(--line); border-radius: var(--radius); }
 
 /* video row: phone screen recordings in a hardware-dark bezel, same in both themes */
 /* chapter photos: one beside the prose, two in a row at equal height. --a is a photo's aspect,
@@ -121,4 +121,15 @@
 
 @media (max-width: 400px) {
   .pg-name { font-size: var(--text-xl); } /* one long word (KnowledgeHub) has to fit the window */
+}
+
+/* photos marked `wrap` share one row at equal height, cropped to fill, so two odd shapes sit
+   together instead of each taking a full-width slab; phones stack them */
+.pg-blk:has(.pg-shot-wrap) { grid-template-columns: 1fr 1fr; column-gap: var(--space-3); justify-items: stretch; }
+.pg-blk:has(.pg-shot-wrap) > .pg-prose, .pg-blk:has(.pg-shot-wrap) > .pg-blk-lab { grid-column: 1 / -1; } /* prose spans the row; only the photos pair up */
+.pg-shot-wrap { max-width: 100%; }
+.pg-shot-wrap img { width: 100%; height: 22rem; max-height: none; object-fit: cover; object-position: center 40%; }
+@media (max-width: 700px) {
+  .pg-blk:has(.pg-shot-wrap) { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-4); }
+  .pg-shot-wrap img { height: 16rem; }
 }

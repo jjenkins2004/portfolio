@@ -20,7 +20,7 @@ export type Media =
   | { kind: 'pre'; pre: string; caption?: string; lang?: 'python' | 'typescript'; tight?: boolean } // code (highlighted when lang set) or ascii diagram
   | { kind: 'anim'; frames: string[]; ms?: number; caption?: string; tight?: boolean } // looping ascii animation; frames share one fixed size
   | { kind: 'anim'; base: string; path: Cell[]; run?: number; ms?: number; caption?: string; tight?: boolean } // one diagram with a green pulse of `run` cells sliding along `path`
-  | { kind: 'img'; src: string; alt: string; caption?: string }
+  | { kind: 'img'; src: string; alt: string; caption?: string; wrap?: boolean } // wrap: float it so the prose runs alongside
   | { kind: 'chat'; turns: ChatTurn[]; caption?: string } // an example conversation: user bubbles right, ai dot-rows left
   | { kind: 'video'; clips: VideoClip[]; caption?: string }; // phone screen recordings in one row, muted loop, device bezel
 
@@ -49,7 +49,7 @@ export type PageSection = { title: string; note?: string; body?: string; blocks?
 export type Fact = { label: string; text: string; href?: string };
 
 export type PageViewProps = {
-  dir: 'projects' | 'experience';
+  dir: 'projects' | 'experience' | 'elsewhere';
   slug: string;
   name: string;
   dates: string; // right of the name
@@ -232,7 +232,7 @@ function MediaList({ media }: { media?: Media[] }) {
             {m.caption && <p className="pg-cap">{m.caption}</p>}
           </div>
         ) : (
-          <figure className="pg-shot" key={i}>
+          <figure className={m.kind === 'img' && m.wrap ? 'pg-shot pg-shot-wrap' : 'pg-shot'} key={i}>
             <img src={m.src} alt={m.alt} />
             {m.caption && <figcaption className="pg-cap">{m.caption}</figcaption>}
           </figure>
@@ -414,14 +414,14 @@ export default function PageView({ dir, slug, name, dates, line, facts, sections
     </div>,
     ...sections.flatMap(sectionBlocks),
     <p className="pg-cd" key="cd">
-      <a href={'#' + dir}>$ cd ..</a>
+      <a href={'/#' + dir}>$ cd ..</a>
       <span className="pg-cursor" />
     </p>,
   ];
   const run = useCat(cmd, blocks.length);
   return (
     <div className="pg-page">
-      <Window title={'jjenkins/' + dir + '/' + slug + ' — zsh'}>
+      <Window title={'jjenkins/' + dir + '/' + slug + ' — zsh'} close="/">
         <p className="pg-cmd">
           <span className="pg-prompt">$ </span>
           {run.cmd}

@@ -1,6 +1,6 @@
 import type { TermItem } from '../components/TermSection/TermSection';
 
 export const elsewhere: TermItem[] = [
-  { name: 'troy-labs', href: '#/elsewhere/troy-labs', line: "USC's startup incubator — building with early-stage teams." }, // TODO: Joshua's role
-  { name: 'gssc-korea', href: '#/elsewhere/gssc-korea', line: 'Represented USC with Dori; top 3 globally among student startups.' },
+  { name: 'troy-labs', href: '/elsewhere/troy-labs', line: "USC's startup incubator — building with early-stage teams." }, // TODO: Joshua's role
+  { name: 'gssc-korea', href: '/elsewhere/gssc-korea', line: 'Represented USC with Dori, an AI dementia caregiving platform, and placed top 3 globally.', meta: 'agent loops · LangGraph · May 2025' },
 ];

@@ -1,23 +1,50 @@
 import { useEffect, useRef, useState } from 'react';
+import ElsewherePage from './components/ProjectPage/ElsewherePage';
 import ExperiencePage from './components/ProjectPage/ExperiencePage';
 import ProjectPage from './components/ProjectPage/ProjectPage';
 import TermSection from './components/TermSection/TermSection';
 import Window from './components/TermSection/Window';
 import { elsewhere } from './content/elsewhere';
 import { experience } from './content/experience';
-import { experiencePages, pages } from './content/pages';
+import { elsewherePages, experiencePages, pages } from './content/pages';
+import { pageTitle, SITE_NAME } from './content/meta';
 import { profile } from './content/profile';
 import { projects } from './content/projects';
 import { Home } from './sections/home/Home';
 
-function useHash() {
-  const [hash, setHash] = useState(window.location.hash);
+const PAGE = /^\/(projects|experience|elsewhere)\/([\w-]+)\/?$/;
+// the links the app routes itself: home (with or without a section hash) and a page
+const INTERNAL = /^\/(#[\w-]*)?$|^\/(projects|experience|elsewhere)\/[\w-]+\/?$/;
+
+// pages used to live behind #/section/slug; an old link lands on its path
+{
+  const old = window.location.hash.match(/^#\/((projects|experience|elsewhere)\/[\w-]+)$/);
+  if (old) window.history.replaceState(null, '', '/' + old[1]);
+}
+
+/** The path, kept current through the app's own links and the back button. A same-path link (a section jump) is left to the browser. */
+function usePath() {
+  const [path, setPath] = useState(window.location.pathname);
   useEffect(() => {
-    const on = () => setHash(window.location.hash);
-    window.addEventListener('hashchange', on);
-    return () => window.removeEventListener('hashchange', on);
+    const on = () => setPath(window.location.pathname);
+    const click = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as Element).closest('a');
+      const href = a?.getAttribute('href');
+      if (!a || !href || a.target || !INTERNAL.test(href)) return;
+      if (new URL(href, window.location.href).pathname === window.location.pathname) return;
+      e.preventDefault();
+      window.history.pushState(null, '', href);
+      on();
+    };
+    window.addEventListener('popstate', on);
+    document.addEventListener('click', click);
+    return () => {
+      window.removeEventListener('popstate', on);
+      document.removeEventListener('click', click);
+    };
   }, []);
-  return hash;
+  return path;
 }
 
 const SECTIONS = ['home', 'projects', 'experience', 'elsewhere'];
@@ -90,13 +117,13 @@ function SiteNav({ active }: { active: string }) {
 function NotFound({ path }: { path: string }) {
   return (
     <div className="pg-page">
-      <Window title="jjenkins — zsh">
+      <Window title="jjenkins — zsh" close="/">
         <p className="pg-cmd">
           <span className="pg-prompt">$ </span>cd ~/jjenkins/{path}
         </p>
         <p className="pg-mono">zsh: no such page (yet): {path}</p>
         <p className="pg-cd">
-          <a href="#projects">$ cd ..</a>
+          <a href="/#projects">$ cd ..</a>
         </p>
       </Window>
     </div>
@@ -104,13 +131,17 @@ function NotFound({ path }: { path: string }) {
 }
 
 export default function App() {
-  const hash = useHash();
-  const route = hash.match(/^#\/(projects|experience|elsewhere)\/([\w-]+)$/);
+  const path = usePath();
+  const route = path.match(PAGE);
   const active = useActiveSection(!route);
+  const [, section = '', slug = ''] = route ?? [];
+  useEffect(() => {
+    document.title = route ? pageTitle(section, slug) : SITE_NAME;
+  }, [route, section, slug]);
   if (route) {
-    const [, section, slug] = route;
     if (section === 'projects' && pages[slug]) return <ProjectPage key={slug} p={pages[slug]} />; // key: a fresh run per page
     if (section === 'experience' && Object.hasOwn(experiencePages, slug)) return <ExperiencePage key={slug} p={experiencePages[slug]} />;
+    if (section === 'elsewhere' && Object.hasOwn(elsewherePages, slug)) return <ElsewherePage key={slug} p={elsewherePages[slug]} />;
     return <NotFound path={section + '/' + slug} />;
   }
   return (

@@ -46,7 +46,7 @@ export const silky: ExperiencePageData = {
     },
     {
       title: 'lessons',
-      body: "[Recallia](#/experience/recallia) ended with three lessons: talk before you build, don't build what nobody asked for, ship fast. Silky was the first venture to apply them.",
+      body: "[Recallia](/experience/recallia) ended with three lessons: talk before you build, don't build what nobody asked for, ship fast. Silky was the first venture to apply them.",
       subs: [
         {
           title: 'work around the blocker',

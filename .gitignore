@@ -31,3 +31,6 @@ Recallia Dump.docx
 
 # local recallia moment dump, never committed
 .recallia-data/
+
+# agent scratch: plans and worktrees, not site source
+.claude/
