@@ -63,6 +63,7 @@
 @media (max-width: 720px) {
   .tsec-body { padding: var(--space-4) var(--space-3); }
   .tsec-meta { flex-basis: 100%; margin-left: 0; padding-left: 0; white-space: normal; }
+  .tsec-name { white-space: normal; overflow-wrap: anywhere; }
   .tsec-root, .tsec-body > .tsec-tree { margin-left: 2.2rem; }
   .tsec-n { left: -2.2rem; }
   .tsec-kids .tsec-item .tsec-n { left: -4.1rem; }

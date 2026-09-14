@@ -44,8 +44,8 @@ function Node({ item, nums }: { item: TermItem; nums: Map<TermItem, string> }) {
       {item.children && (
         <div className="tsec-kids">
           <div className="tsec-tree">
-            {item.children.map((c) => (
-              <Node key={c.name} item={c} nums={nums} />
+            {item.children.map((c, k) => (
+              <Node key={k} item={c} nums={nums} />
             ))}
           </div>
         </div>
@@ -54,8 +54,8 @@ function Node({ item, nums }: { item: TermItem; nums: Map<TermItem, string> }) {
   );
 }
 
-/** `active` comes from the deck (the slide is fully in view, scroll settled on it). Without it, the run
- * starts when the window first scrolls into view. Either way it runs once. */
+/** The run starts when the window first scrolls into view; `active` forces it to start now
+ * (Storybook, tests). Either way it runs once. */
 export default function TermSection({ dir, items, active }: { dir: string; items: TermItem[]; active?: boolean }) {
   // Line numbers count tree entries only; description lines hang unnumbered like wrapped output.
   const nums = new Map<TermItem, string>();
@@ -106,8 +106,8 @@ export default function TermSection({ dir, items, active }: { dir: string; items
         )}
         {run.n > 1 && (
           <div className="tsec-tree">
-            {items.slice(0, run.n - 1).map((i) => (
-              <Node key={i.name} item={i} nums={nums} />
+            {items.slice(0, run.n - 1).map((i, k) => (
+              <Node key={k} item={i} nums={nums} />
             ))}
           </div>
         )}

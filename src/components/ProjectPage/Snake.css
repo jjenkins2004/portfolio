@@ -57,3 +57,7 @@
 @media (prefers-reduced-motion: reduce) {
   .sn-detail { animation: none; }
 }
+
+@media (pointer: coarse) {
+  .sn .sn-btn { padding: 0.5rem 0.75rem; margin: -0.5rem -0.75rem; } /* finger-sized hit area, same footprint; outranks the .sn button reset */
+}
