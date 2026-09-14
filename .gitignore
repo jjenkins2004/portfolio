@@ -34,3 +34,5 @@ Recallia Dump.docx
 
 # agent scratch: plans and worktrees, not site source
 .claude/
+.vercel
+.env*
