@@ -12,6 +12,6 @@ export const rows: Row[] = [
   { kind: 'value', key: 'education', value: profile.education },
   { kind: 'tags', key: 'concepts', tags: profile.concepts, column: true },
   { kind: 'tags', key: 'stack', tags: profile.stack },
-  { kind: 'value', key: 'favorite-activities', value: profile.favoriteActivities, todo: true },
+  { kind: 'value', key: 'favorite-activities', value: profile.favoriteActivities },
   ...profile.sections.map((s) => ({ kind: 'jump' as const, key: `${s.id}/`, href: `#${s.id}` })),
 ];

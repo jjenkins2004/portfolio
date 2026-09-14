@@ -4,9 +4,9 @@ export const profile = {
   last: 'Jenkins',
   name: 'Joshua Jenkins',
   identity: 'AI engineer who has shipped his own startups and worked inside others.',
-  workStatus: 'Open to founding / forward-deployed roles',
+  workStatus: 'Open to AI, forward-deployed, and founding engineer roles',
   location: 'Los Angeles',
-  education: 'MS CS, USC ’27',
+  education: 'MS CS, USC ’27 · BS CS ’26',
   // Chip rows on the home terminal. Concepts: the headline concept of each top experience, in rank
   // order, one per line. Every chip links to a different page.
   concepts: [
@@ -20,7 +20,7 @@ export const profile = {
     { text: 'TypeScript', href: '#/projects/knowledgehub' },
     { text: 'Swift', href: '#/projects/clipirl' },
   ],
-  favoriteActivities: 'Two or three things I do for fun', // TODO
+  favoriteActivities: 'skiing, tennis, running, building',
   links: [
     { label: 'GitHub', href: 'https://github.com/jjenkins2004' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/joshua-jenkins-2943a792/' },
